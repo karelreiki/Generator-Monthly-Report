@@ -6,942 +6,325 @@
 <title>Monthly Report Generator — Golden English Bekasi</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0B0F1A;
-  --card: #111827;
-  --card-alt: #1A2236;
-  --accent: #F59E0B;
-  --accent-dim: #D97706;
-  --green: #10B981;
-  --green-dim: #059669;
-  --red: #EF4444;
-  --red-dim: #DC2626;
-  --blue: #3B82F6;
-  --blue-dim: #2563EB;
-  --purple: #8B5CF6;
-  --text: #F9FAFB;
-  --text-muted: #9CA3AF;
-  --text-dim: #6B7280;
-  --border: #1F2937;
-  --border-light: #374151;
-  --input-bg: #0D1117;
-  --font: 'Outfit', sans-serif;
-  --mono: 'JetBrains Mono', monospace;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
-input, select, textarea { font-family: var(--font); }
-button { font-family: var(--font); }
-
-/* Header */
-.header { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-.header-logo { display: flex; align-items: center; gap: 14px; }
-.header-icon { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--accent-dim)); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: var(--bg); }
-.header-title { font-size: 14px; font-weight: 700; letter-spacing: -0.3px; }
-.header-sub { font-size: 11px; color: var(--text-dim); }
-.header-actions { display: flex; gap: 8px; align-items: center; }
-.btn { padding: 7px 14px; font-size: 11px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; border: none; }
-.btn-ghost { background: var(--card-alt); color: var(--text-muted); border: 1px solid var(--border); }
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
-.btn-active { background: var(--accent); color: var(--bg); }
-.btn-inactive { background: var(--card-alt); color: var(--text-muted); }
-.divider-v { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
-
-/* Layout */
-.main-entry { display: flex; flex: 1; overflow: hidden; }
-.panel-form { width: 42%; min-width: 420px; border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
-.panel-preview { flex: 1; overflow: auto; padding: 28px; background: #080C16; }
-
-/* Tabs */
-.tabs { display: flex; gap: 2px; padding: 12px 20px 0; background: var(--card); border-bottom: 1px solid var(--border); }
-.tab { padding: 10px 18px; font-size: 12px; font-weight: 600; background: transparent; color: var(--text-dim); border: none; border-radius: 8px 8px 0 0; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
-.tab.active { background: var(--bg); color: var(--accent); border-bottom-color: var(--accent); }
-.tab-content { flex: 1; overflow: auto; padding: 20px; }
-
-/* Branch tabs */
-.branch-tabs { display: flex; gap: 6px; margin-bottom: 20px; }
-.branch-tab { padding: 8px 14px; font-size: 11px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
-.branch-tab.active { background: var(--accent); color: var(--bg); }
-.branch-tab:not(.active) { background: var(--card-alt); color: var(--text-muted); }
-
-/* Form elements */
-.form-section { margin-bottom: 28px; }
-.form-section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-.form-section-bar { width: 3px; height: 20px; border-radius: 3px; }
-.form-section-title { font-size: 15px; font-weight: 600; }
-.form-section-body { display: flex; flex-direction: column; gap: 12px; padding-left: 13px; }
-.field-row { display: flex; gap: 12px; }
-.field-row-item { display: flex; gap: 10px; align-items: flex-start; }
-.field { display: flex; flex-direction: column; gap: 4px; flex: 1; }
-.field label { font-size: 11px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-.field input, .field select, .field textarea {
-  background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px;
-  padding: 9px 12px; color: var(--text); font-size: 13px; outline: none; width: 100%;
-  transition: border-color 0.2s;
-}
-.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
-.field textarea { resize: vertical; line-height: 1.6; }
-.field .mono { font-family: var(--mono); }
-.hint { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
-
-.btn-add { background: none; border: 1px dashed var(--border-light); border-radius: 8px; padding: 8px 16px; color: var(--text-dim); font-size: 12px; cursor: pointer; transition: all 0.2s; }
-.btn-add:hover { border-color: var(--accent); color: var(--accent); }
-.btn-remove { background: rgba(239,68,68,0.1); border: none; border-radius: 6px; width: 28px; height: 28px; color: var(--red); font-size: 16px; cursor: pointer; flex-shrink: 0; margin-top: 18px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-.btn-remove:hover { background: rgba(239,68,68,0.25); }
-
-.staff-card { background: var(--card-alt); border-radius: 10px; padding: 14px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
-.staff-row { display: flex; gap: 10px; align-items: center; }
-.staff-num { font-size: 11px; color: var(--text-dim); font-weight: 600; width: 24px; flex-shrink: 0; }
-.staff-fields { display: flex; gap: 10px; padding-left: 34px; }
-
-/* Slide */
-.slide { background: var(--bg); border-radius: 16px; min-height: 520px; padding: 36px 40px; border: 1px solid var(--border); position: relative; overflow: hidden; }
-.slide-accent { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--blue), var(--purple)); }
-.slide-num { position: absolute; bottom: 14px; right: 20px; font-size: 11px; color: var(--text-dim); font-family: var(--mono); }
-
-/* Slide components */
-.badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; font-family: var(--mono); letter-spacing: 0.5px; text-transform: uppercase; }
-.stat-cards { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
-.stat-card { background: var(--card); border-radius: 14px; padding: 20px 22px; border: 1px solid var(--border); position: relative; overflow: hidden; flex: 1; min-width: 160px; }
-.stat-card-bar { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-.stat-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
-.stat-value { font-size: 26px; font-weight: 700; font-family: var(--mono); }
-.stat-sub { font-size: 12px; margin-top: 4px; font-weight: 600; }
-.section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
-.section-title-bar { width: 4px; height: 28px; border-radius: 4px; }
-.section-title h2 { font-size: 20px; font-weight: 700; margin: 0; }
-
-.progress-bar { background: var(--input-bg); border-radius: 10px; height: 10px; width: 100%; overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 10px; transition: width 0.6s ease; }
-
-.mini-table { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); width: 100%; }
-.mini-table table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.mini-table th { padding: 10px 14px; text-align: right; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; background: var(--card-alt); }
-.mini-table th:first-child { text-align: left; }
-.mini-table td { padding: 10px 14px; text-align: right; color: var(--text-muted); border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 12px; }
-.mini-table td:first-child { text-align: left; color: var(--text); font-weight: 500; font-family: var(--font); }
-.mini-table tr:nth-child(even) { background: var(--card-alt); }
-.mini-table tr:nth-child(odd) { background: var(--card); }
-
-.chart-box { background: var(--card); border-radius: 14px; padding: 24px; border: 1px solid var(--border); }
-.chart-label { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-weight: 500; }
-.bar-chart { display: flex; align-items: flex-end; gap: 8px; padding: 0 4px; }
-.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.bar-val { font-size: 10px; color: var(--text-muted); font-family: var(--mono); }
-.bar-fill { width: 100%; max-width: 48px; border-radius: 6px 6px 2px 2px; transition: height 0.5s ease; }
-.bar-label { font-size: 10px; color: var(--text-dim); text-align: center; line-height: 1.2; }
-
-/* Staff slide */
-.staff-slide-card { background: var(--card); border-radius: 14px; padding: 18px 22px; border: 1px solid var(--border); display: flex; gap: 20px; align-items: center; margin-bottom: 14px; }
-.staff-avatar { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
-.staff-info { flex: 1; }
-.staff-name-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-.staff-name { font-size: 14px; font-weight: 600; }
-.staff-pct { font-size: 13px; font-weight: 700; font-family: var(--mono); }
-.staff-meta { display: flex; gap: 16px; margin-top: 8px; }
-.staff-meta span { font-size: 11px; color: var(--text-dim); }
-.staff-meta span em { font-style: normal; color: var(--text-muted); font-family: var(--mono); }
-
-/* Plans */
-.plans-grid { display: flex; gap: 28px; }
-.plans-col { flex: 1; }
-.plan-card { background: var(--card); border-radius: 12px; padding: 16px 18px; border: 1px solid var(--border); margin-bottom: 12px; }
-.plan-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-.plan-title { font-size: 13px; font-weight: 600; }
-.plan-branch { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
-.plan-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-
-/* Donut */
-.donut-wrap { display: flex; align-items: center; gap: 20px; }
-.donut-legend { display: flex; flex-direction: column; gap: 6px; }
-.donut-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.donut-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
-.donut-label { color: var(--text-muted); }
-.donut-val { color: var(--text); font-weight: 600; font-family: var(--mono); margin-left: auto; }
-
-/* Navigation */
-.nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-.nav-dots { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
-.nav-dot { width: 10px; height: 10px; border-radius: 5px; border: none; cursor: pointer; transition: all 0.2s; }
-.nav-dot.active { background: var(--accent); transform: scale(1.3); }
-.nav-dot:not(.active) { background: var(--border-light); }
-.nav-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
-.nav-btn:disabled { color: var(--text-dim); cursor: default; }
-.nav-counter { padding: 0 12px; font-size: 12px; color: var(--text-muted); font-family: var(--mono); }
-
-/* Present mode */
-.present-mode { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px; background: #080C16; }
-.present-nav { display: flex; gap: 12px; margin-top: 24px; align-items: center; }
-.present-btn { padding: 10px 20px; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer; }
-.present-hint { font-size: 11px; color: var(--text-dim); margin-top: 16px; }
-
-/* Summary box */
-.summary-box { margin-top: 24px; background: var(--card); border-radius: 14px; padding: 20px 24px; border: 1px solid var(--border); border-left: 4px solid var(--accent); }
-.summary-label { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
-.summary-text { font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
-
-/* Cover */
-.cover { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 450px; }
-.cover h1 { font-size: 42px; font-weight: 800; margin: 20px 0 8px; text-align: center; letter-spacing: -1px; }
-.cover .period { font-size: 22px; color: var(--accent); font-weight: 600; font-family: var(--mono); }
-.cover .branches { display: flex; gap: 8px; margin-top: 28px; }
-
-/* Empty state */
-.empty { color: var(--text-dim); font-size: 13px; text-align: center; padding: 40px; }
-
-/* Responsive */
-@media (max-width: 900px) {
-  .main-entry { flex-direction: column; }
-  .panel-form { width: 100%; min-width: 0; border-right: none; border-bottom: 1px solid var(--border); max-height: 50vh; }
-  .plans-grid { flex-direction: column; }
-  .stat-cards { flex-wrap: wrap; }
-}
+:root{--bg:#0B0F1A;--card:#111827;--card-alt:#1A2236;--accent:#F59E0B;--green:#10B981;--red:#EF4444;--blue:#3B82F6;--purple:#8B5CF6;--text:#F9FAFB;--text-muted:#9CA3AF;--text-dim:#6B7280;--border:#1F2937;--border-light:#374151;--input-bg:#0D1117;--font:'Outfit',sans-serif;--mono:'JetBrains Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
+input,select,textarea,button{font-family:var(--font)}
+.header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header-logo{display:flex;align-items:center;gap:14px}
+.header-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--bg)}
+.header-title{font-size:14px;font-weight:700;letter-spacing:-0.3px}
+.header-sub{font-size:11px;color:var(--text-dim)}
+.header-actions{display:flex;gap:8px;align-items:center}
+.btn{padding:7px 14px;font-size:11px;font-weight:600;border-radius:8px;cursor:pointer;transition:all .2s;border:none}
+.btn-ghost{background:var(--card-alt);color:var(--text-muted);border:1px solid var(--border)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-active{background:var(--accent);color:var(--bg)}.btn-inactive{background:var(--card-alt);color:var(--text-muted)}
+.divider-v{width:1px;height:24px;background:var(--border);margin:0 4px}
+.main-entry{display:flex;flex:1;overflow:hidden}
+.panel-form{width:42%;min-width:420px;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.panel-preview{flex:1;overflow:auto;padding:28px;background:#080C16}
+.tabs{display:flex;gap:2px;padding:12px 20px 0;background:var(--card);border-bottom:1px solid var(--border)}
+.tab{padding:10px 18px;font-size:12px;font-weight:600;background:transparent;color:var(--text-dim);border:none;border-radius:8px 8px 0 0;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.tab.active{background:var(--bg);color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{flex:1;overflow:auto;padding:20px}
+.branch-tabs{display:flex;gap:6px;margin-bottom:20px}
+.branch-tab{padding:8px 14px;font-size:11px;font-weight:600;border:none;border-radius:8px;cursor:pointer;transition:all .2s}
+.branch-tab.active{background:var(--accent);color:var(--bg)}.branch-tab:not(.active){background:var(--card-alt);color:var(--text-muted)}
+.form-section{margin-bottom:28px}.form-section-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.form-section-bar{width:3px;height:20px;border-radius:3px}.form-section-title{font-size:15px;font-weight:600}
+.form-section-body{display:flex;flex-direction:column;gap:12px;padding-left:13px}
+.field-row{display:flex;gap:12px}.field-row-item{display:flex;gap:10px;align-items:flex-start}
+.field{display:flex;flex-direction:column;gap:4px;flex:1}
+.field label{font-size:11px;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.field input,.field select,.field textarea{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;width:100%;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field textarea{resize:vertical;line-height:1.6}.field .mono{font-family:var(--mono)}
+.hint{font-size:12px;color:var(--text-dim);margin-top:4px}
+.btn-add{background:none;border:1px dashed var(--border-light);border-radius:8px;padding:8px 16px;color:var(--text-dim);font-size:12px;cursor:pointer;transition:all .2s}
+.btn-add:hover{border-color:var(--accent);color:var(--accent)}
+.btn-remove{background:rgba(239,68,68,.1);border:none;border-radius:6px;width:28px;height:28px;color:#EF4444;font-size:16px;cursor:pointer;flex-shrink:0;margin-top:18px;display:flex;align-items:center;justify-content:center}
+.btn-remove:hover{background:rgba(239,68,68,.25)}
+.staff-card{background:var(--card-alt);border-radius:10px;padding:14px;border:1px solid var(--border);display:flex;flex-direction:column;gap:10px}
+.staff-row{display:flex;gap:10px;align-items:center}.staff-num{font-size:11px;color:var(--text-dim);font-weight:600;width:24px;flex-shrink:0}
+.staff-fields{display:flex;gap:10px;padding-left:34px}
+.slide{background:var(--bg);border-radius:16px;min-height:520px;padding:36px 40px;border:1px solid var(--border);position:relative;overflow:hidden}
+.slide-accent{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#F59E0B,#3B82F6,#8B5CF6)}
+.slide-num{position:absolute;bottom:14px;right:20px;font-size:11px;color:var(--text-dim);font-family:var(--mono)}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.nav-dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:20px}
+.nav-dot{width:10px;height:10px;border-radius:5px;border:none;cursor:pointer;transition:all .2s}
+.nav-dot.active{background:var(--accent);transform:scale(1.3)}.nav-dot:not(.active){background:var(--border-light)}
+.nav-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.nav-btn:disabled{color:var(--text-dim);cursor:default}
+.nav-counter{padding:0 12px;font-size:12px;color:var(--text-muted);font-family:var(--mono)}
+.present-mode{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;background:#080C16}
+.empty{color:var(--text-dim);font-size:13px;text-align:center;padding:40px}
+@media(max-width:900px){.main-entry{flex-direction:column}.panel-form{width:100%;min-width:0;border-right:none;border-bottom:1px solid var(--border);max-height:50vh}}
+.guide-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.guide-modal{background:#111827;border:1px solid #1F2937;border-radius:16px;max-width:680px;width:90%;max-height:85vh;overflow:auto;padding:0;animation:slideUp .25s ease}
+.guide-header{padding:24px 28px 16px;border-bottom:1px solid #1F2937;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#111827;z-index:1;border-radius:16px 16px 0 0}
+.guide-header h2{font-size:18px;font-weight:700;margin:0;display:flex;align-items:center;gap:10px}
+.guide-close{width:32px;height:32px;border-radius:8px;border:1px solid #1F2937;background:#1A2236;color:#9CA3AF;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.guide-close:hover{color:#F59E0B;border-color:#F59E0B}
+.guide-body{padding:20px 28px 28px}
+.guide-section{margin-bottom:24px}
+.guide-section-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.guide-section-title .dot{width:8px;height:8px;border-radius:4px;flex-shrink:0}
+.guide-item{background:#0D1117;border:1px solid #1F2937;border-radius:10px;padding:12px 16px;margin-bottom:8px}
+.guide-item-label{font-size:12px;font-weight:600;color:#F59E0B;margin-bottom:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.5px}
+.guide-item-desc{font-size:13px;color:#9CA3AF;line-height:1.6}
+.guide-item-example{font-size:11px;color:#6B7280;margin-top:4px;font-family:'JetBrains Mono',monospace}
+.guide-tabs{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap}
+.guide-tab{padding:6px 14px;font-size:11px;font-weight:600;border:none;border-radius:6px;cursor:pointer;transition:all .2s}
+.guide-tab.active{background:#F59E0B;color:#0B0F1A}
+.guide-tab:not(.active){background:#1A2236;color:#6B7280}
+.guide-tab:not(.active):hover{color:#9CA3AF}
 </style>
 </head>
 <body>
-
 <header class="header">
-  <div class="header-logo">
-    <div class="header-icon">GE</div>
-    <div>
-      <div class="header-title">Monthly Report Generator</div>
-      <div class="header-sub">Golden English Bekasi</div>
-    </div>
-  </div>
+  <div class="header-logo"><div class="header-icon">GE</div><div><div class="header-title">Monthly Report Generator</div><div class="header-sub">Golden English Bekasi</div></div></div>
   <div class="header-actions">
     <button class="btn btn-ghost" onclick="importJSON()">Import JSON</button>
     <button class="btn btn-ghost" onclick="exportJSON()">Export JSON</button>
+    <button class="btn btn-ghost" onclick="toggleGuide()" style="border-color:#F59E0B44;color:#F59E0B">&#9432; Guide</button>
     <div class="divider-v"></div>
     <button class="btn" id="btnEntry" onclick="setMode('entry')">Data Entry</button>
     <button class="btn" id="btnPresent" onclick="setMode('present')">Present</button>
   </div>
 </header>
-
 <div id="app"></div>
-
 <script>
-// ═══════════════════════════════════════════════
-// DATA & STATE
-// ═══════════════════════════════════════════════
-const BRANCHES = ["Jatibening Bekasi", "Summarecon Bekasi", "Cikarang Bekasi"];
-const MONTHS = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-const PROG_REG = ["General English","TOEFL Preparation","IELTS Preparation","Business English","Conversation Class","Grammar Intensive","Kids English","Teens English"];
-const PROG_PRV = ["Private General English","Private TOEFL","Private IELTS","Private Business English","Private Conversation","Private Kids","Private Teens"];
+const C={bg:'#0B0F1A',card:'#111827',cardAlt:'#1A2236',accent:'#F59E0B',accentDim:'#D97706',green:'#10B981',greenDim:'#059669',red:'#EF4444',blue:'#3B82F6',blueDim:'#2563EB',purple:'#8B5CF6',purpleDim:'#7C3AED',text:'#F9FAFB',textMuted:'#9CA3AF',textDim:'#6B7280',border:'#1F2937',borderLight:'#374151',inputBg:'#0D1117',pink:'#EC4899',teal:'#14B8A6'};
+const BRANCHES=["Jatibening Bekasi","Summarecon Bekasi","Cikarang Bekasi"];
+const MONTHS=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const PROG_REG=["English for Children","English for Teenagers","Speak On","English for Preschool","Basic Communication","Active Communication","Business English","TOEFL Preparation","IELTS Pro"];
+const PROG_PRV=["Basic Communication","Active Communication","Business English","English for Children","English for Teenagers","IELTS Pro","TOEFL Preparation","Speak On"];
 
-function defaultBranch() {
-  return {
-    revenue:"", target_revenue:"", prev_revenue:"",
-    profit:"", target_profit:"", prev_profit:"",
-    expenses:"", prev_expenses:"",
-    expense_categories:[{name:"",amount:""}],
-    regular_count:"", private_count:"",
-    regular_new:"", regular_ext:"",
-    private_new:"", private_ext:"",
-    top_regular:[{program:PROG_REG[0],count:""}],
-    top_private:[{program:PROG_PRV[0],count:""}],
-    revenue_by_program:[{program:"",revenue:""}],
+function defaultBranch(){return{revenue:"",target_revenue:"",prev_revenue:"",profit:"",target_profit:"",prev_profit:"",expenses:"",prev_expenses:"",expense_categories:[{name:"",amount:""}],regular_count:"",private_count:"",regular_new:"",regular_ext:"",private_new:"",private_ext:"",top_regular:[{program:PROG_REG[0],count:""}],top_private:[{program:PROG_PRV[0],count:""}],revenue_by_program:[{program:"",revenue:""}]};}
+function defaultData(){const d={month:MONTHS[new Date().getMonth()],year:String(new Date().getFullYear()),branches:{},sales_staff:[{name:"",target:"",achieved:"",deals:""}],aftersales_staff:[{name:"",retention_target:"",retention_achieved:"",followups:"",resolutions:""}],summary:"",done_projects:[{title:"",description:"",branch:BRANCHES[0],status:"Selesai"}],future_plans:[{title:"",description:"",branch:BRANCHES[0],timeline:""}]};BRANCHES.forEach(b=>d.branches[b]=defaultBranch());return d;}
+
+let data=defaultData(),mode="entry",currentSlide=0,activeTab="general",activeBranch=BRANCHES[0];
+
+const fmt=n=>{const v=parseFloat(n);return isNaN(v)?"0":new Intl.NumberFormat("id-ID").format(v)};
+const fmtRp=n=>`Rp ${fmt(n)}`;
+const pct=(a,b)=>{const na=parseFloat(a),nb=parseFloat(b);return(isNaN(na)||isNaN(nb)||nb===0)?"0":((na/nb)*100).toFixed(1)};
+const growthPct=(c,p)=>{const nc=parseFloat(c),np=parseFloat(p);return(isNaN(nc)||isNaN(np)||np===0)?0:(((nc-np)/np)*100).toFixed(1)};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function hexA(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`}
+
+function render(){const app=document.getElementById('app');document.getElementById('btnEntry').className=`btn ${mode==='entry'?'btn-active':'btn-inactive'}`;document.getElementById('btnPresent').className=`btn ${mode==='present'?'btn-active':'btn-inactive'}`;app.innerHTML=mode==='entry'?renderEntryMode():renderPresentMode();}
+
+// ── Slide Components ──
+function getSlides(){const s=[];s.push({id:'cover',html:slideCover});BRANCHES.forEach(b=>{s.push({id:`rev-${b}`,html:()=>slideRevenue(b)});s.push({id:`prf-${b}`,html:()=>slideProfit(b)});s.push({id:`exp-${b}`,html:()=>slideExpenses(b)});s.push({id:`trx-${b}`,html:()=>slideTransactions(b)});});s.push({id:'sales',html:slideSalesStaff});s.push({id:'aftersales',html:slideAfterSalesStaff});s.push({id:'summary',html:slideSummary});s.push({id:'plans',html:slidePlans});return s;}
+function slideWrap(c,sn,ts){return`<div class="slide"><div class="slide-accent"></div>${c}<div class="slide-num">${sn} / ${ts}</div></div>`}
+function mkBadge(t,col=C.accent){return`<span style="display:inline-block;padding:3px 10px;border-radius:6px;background:${hexA(col,.13)};color:${col};font-size:11px;font-weight:600;font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase">${esc(t)}</span>`}
+function mkStatCard(label,value,sub,col=C.accent){let sh='';if(sub){const sc=String(sub).startsWith('-')?C.red:C.green;sh=`<div style="font-size:12px;margin-top:4px;font-weight:600;color:${sc}">${esc(sub)}</div>`}return`<div style="background:${C.card};border-radius:14px;padding:20px 22px;border:1px solid ${C.border};position:relative;overflow:hidden;flex:1;min-width:160px"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:${col}"></div><div style="font-size:12px;color:${C.textMuted};margin-bottom:6px;font-weight:500">${esc(label)}</div><div style="font-size:26px;font-weight:700;font-family:var(--mono);color:${C.text}">${value}</div>${sh}</div>`}
+function mkTitle(t,a=C.accent){return`<div style="display:flex;align-items:center;gap:12px;margin-bottom:24px"><div style="width:4px;height:28px;border-radius:4px;background:${a}"></div><h2 style="font-size:20px;font-weight:700;margin:0">${esc(t)}</h2></div>`}
+function mkProgress(val,max,col=C.accent,h=10){const p=Math.min(parseFloat(pct(val,max)),100);return`<div style="background:${C.inputBg};border-radius:${h}px;height:${h}px;width:100%;overflow:hidden"><div style="height:100%;border-radius:${h}px;width:${p}%;background:linear-gradient(90deg,${col},${hexA(col,.8)});transition:width .6s ease"></div></div>`}
+
+function mkBarChart(items,col=C.accent,height=160){
+  const maxV=Math.max(...items.map(d=>parseFloat(d.value)||0),1);
+  // Distinct colors for 3 bars: dimmer, main, medium
+  const colors=items.length===3?[hexA(col,.45),col,hexA(col,.65)]:items.map(()=>col);
+  return`<div style="display:flex;align-items:flex-end;gap:8px;height:${height}px;padding:0 4px">${items.map((d,i)=>{
+    const h=((parseFloat(d.value)||0)/maxV)*(height-30);
+    return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="font-size:10px;color:${C.textMuted};font-family:var(--mono)">${fmt(d.value)}</span><div style="width:100%;max-width:48px;height:${Math.max(h,4)}px;border-radius:6px 6px 2px 2px;background:${colors[i]};transition:height .5s ease"></div><span style="font-size:10px;color:${C.textDim};text-align:center;line-height:1.2">${esc(d.label)}</span></div>`}).join('')}</div>`}
+
+function mkDonut(segs,size=140){
+  const total=segs.reduce((s,x)=>s+(parseFloat(x.value)||0),0);
+  const r=size/2-10,cx=size/2,cy=size/2,sw=18,circ=2*Math.PI*r;
+  let cum=0,paths=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${C.inputBg}" stroke-width="${sw}"/>`;
+  segs.forEach(seg=>{const p=total>0?(parseFloat(seg.value)||0)/total:0;if(p>0){paths+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${sw}" stroke-dasharray="${circ*p} ${circ*(1-p)}" stroke-dashoffset="${circ*(1-cum)}" stroke-linecap="round"/>`}cum+=p});
+  const legend=segs.map(s=>`<div style="display:flex;align-items:center;gap:8px;font-size:12px"><div style="width:10px;height:10px;border-radius:3px;background:${s.color};flex-shrink:0"></div><span style="color:${C.textMuted}">${esc(s.label)}</span><span style="color:${C.text};font-weight:600;font-family:var(--mono);margin-left:auto">${fmt(s.value)}</span></div>`).join('');
+  return`<div style="display:flex;align-items:center;gap:20px"><svg width="${size}" height="${size}" style="transform:rotate(-90deg)">${paths}</svg><div style="display:flex;flex-direction:column;gap:6px">${legend}</div></div>`}
+
+function mkTable(headers,rows,accent=C.accent){
+  const ths=headers.map((h,i)=>`<th style="padding:10px 14px;text-align:${i?'right':'left'};color:${C.textMuted};font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;background:${C.cardAlt};border-bottom:2px solid ${hexA(accent,.2)}">${esc(h)}</th>`).join('');
+  const trs=rows.map((row,ri)=>`<tr style="background:${ri%2===0?C.card:C.cardAlt}">${row.map((cell,ci)=>`<td style="padding:10px 14px;text-align:${ci?'right':'left'};color:${ci?C.textMuted:C.text};font-weight:${ci?'400':'500'};border-bottom:1px solid ${C.border};font-family:${ci?'var(--mono)':'var(--font)'};font-size:12px">${esc(cell)}</td>`).join('')}</tr>`).join('');
+  return`<div style="border-radius:12px;overflow:hidden;border:1px solid ${C.border}"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`}
+
+function mkBox(content,label){return`<div style="background:${C.card};border-radius:14px;padding:24px;border:1px solid ${C.border};flex:1">${label?`<div style="font-size:13px;color:${C.textMuted};margin-bottom:12px;font-weight:500">${esc(label)}</div>`:''}${content}</div>`}
+
+// ── Slides ──
+function slideCover(){return`<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:450px">${mkBadge('Monthly Report')}<h1 style="font-size:42px;font-weight:800;margin:20px 0 8px;text-align:center;letter-spacing:-1px">Golden English Bekasi</h1><p style="font-size:22px;color:${C.accent};font-weight:600;font-family:var(--mono);margin:0">${esc(data.month)} ${esc(data.year)}</p><div style="display:flex;gap:8px;margin-top:28px">${BRANCHES.map(b=>mkBadge(b,C.textMuted)).join(' ')}</div></div>`}
+
+function slideRevenue(branch){const bd=data.branches[branch],g=growthPct(bd.revenue,bd.prev_revenue),ach=pct(bd.revenue,bd.target_revenue),ok=parseFloat(ach)>=100;return`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">${mkTitle('Revenue Performance')}${mkBadge(branch)}</div><div style="display:flex;gap:16px;margin-bottom:28px;flex-wrap:wrap">${mkStatCard('Revenue',fmtRp(bd.revenue),`${g>=0?'+':''}${g}% vs bulan lalu`,C.accent)}${mkStatCard('Target',fmtRp(bd.target_revenue),null,C.textDim)}${mkStatCard('Achievement',ach+'%',ok?'Target tercapai ✓':'Below target',ok?C.green:C.red)}</div>${mkBox(mkBarChart([{label:'Bulan Lalu',value:bd.prev_revenue},{label:'Bulan Ini',value:bd.revenue},{label:'Target',value:bd.target_revenue}],C.accent,160),'Revenue vs Target')}`}
+
+function slideProfit(branch){const bd=data.branches[branch],g=growthPct(bd.profit,bd.prev_profit),ach=pct(bd.profit,bd.target_profit),margin=pct(bd.profit,bd.revenue),ok=parseFloat(ach)>=100,ac=ok?C.green:C.accent;return`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">${mkTitle('Profit Performance',C.green)}${mkBadge(branch,C.green)}</div><div style="display:flex;gap:16px;margin-bottom:28px;flex-wrap:wrap">${mkStatCard('Profit',fmtRp(bd.profit),`${g>=0?'+':''}${g}% vs bulan lalu`,C.green)}${mkStatCard('Target',fmtRp(bd.target_profit),null,C.textDim)}${mkStatCard('Profit Margin',margin+'%',null,C.green)}</div><div style="display:flex;gap:16px">${mkBox(`<div style="font-size:36px;font-weight:700;color:${ac};font-family:var(--mono);margin-bottom:12px">${ach}%</div>${mkProgress(bd.profit,bd.target_profit,ac,12)}`,'Achievement')}${mkBox(mkBarChart([{label:'Bulan Lalu',value:bd.prev_profit},{label:'Bulan Ini',value:bd.profit},{label:'Target',value:bd.target_profit}],C.green,120),'Profit Comparison')}</div>`}
+
+function slideExpenses(branch){const bd=data.branches[branch],g=growthPct(bd.expenses,bd.prev_expenses),cats=bd.expense_categories.filter(c=>c.name&&c.amount),ec=[C.red,C.accent,C.blue,C.purple,C.green,C.pink,C.teal];let cs='';if(cats.length>0){cs=`<div style="display:flex;gap:16px">${mkBox(mkDonut(cats.map((c,i)=>({label:c.name,value:c.amount,color:ec[i%ec.length]}))),'Breakdown Kategori')}${mkBox(mkTable(['Kategori','Jumlah','%'],cats.map(c=>[c.name,fmtRp(c.amount),pct(c.amount,bd.expenses)+'%']),C.red),'Detail')}</div>`}return`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">${mkTitle('Expenses',C.red)}${mkBadge(branch,C.red)}</div><div style="display:flex;gap:16px;margin-bottom:28px;flex-wrap:wrap">${mkStatCard('Total Expenses',fmtRp(bd.expenses),`${g>=0?'+':''}${g}% vs bulan lalu`,C.red)}${mkStatCard('Bulan Lalu',fmtRp(bd.prev_expenses),null,C.textDim)}${mkStatCard('Expense Ratio',pct(bd.expenses,bd.revenue)+'%','dari revenue',C.accent)}</div>${cs}`}
+
+function slideTransactions(branch){const bd=data.branches[branch],tN=(parseInt(bd.regular_new)||0)+(parseInt(bd.private_new)||0),tE=(parseInt(bd.regular_ext)||0)+(parseInt(bd.private_ext)||0),tR=bd.top_regular.filter(p=>p.count).sort((a,b)=>(parseInt(b.count)||0)-(parseInt(a.count)||0)),tP=bd.top_private.filter(p=>p.count).sort((a,b)=>(parseInt(b.count)||0)-(parseInt(a.count)||0)),rP=bd.revenue_by_program.filter(p=>p.program&&p.revenue);
+const donut=mkDonut([{label:'Baru (Reg)',value:bd.regular_new,color:C.blue},{label:'Ext (Reg)',value:bd.regular_ext,color:C.blueDim},{label:'Baru (Prv)',value:bd.private_new,color:C.purple},{label:'Ext (Prv)',value:bd.private_ext,color:C.purpleDim}],120);
+const mkTL=(items,col)=>items.map(p=>`<div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:12px;color:${C.text}">${esc(p.program)}</span><span style="font-size:12px;color:${col};font-family:var(--mono);font-weight:600">${p.count}</span></div>`).join('');
+let rc='';if(tR.length)rc+=mkBox(mkTL(tR,C.blue),'Top Regular Programs');if(tP.length)rc+=(tR.length?'<div style="height:12px"></div>':'')+mkBox(mkTL(tP,C.purple),'Top Private Programs');
+let rps=rP.length?`<div style="margin-top:16px">${mkBox(mkBarChart(rP.map(p=>({label:p.program,value:p.revenue})),C.accent,130),'Revenue by Program')}</div>`:'';
+return`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">${mkTitle('Transaction Analysis',C.blue)}${mkBadge(branch,C.blue)}</div><div style="display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap">${mkStatCard('Kelas Regular',fmt(bd.regular_count),null,C.blue)}${mkStatCard('Kelas Private',fmt(bd.private_count),null,C.purple)}${mkStatCard('Register Baru',fmt(tN),null,C.green)}${mkStatCard('Perpanjangan',fmt(tE),null,C.accent)}</div><div style="display:flex;gap:16px">${mkBox(donut,'New vs Extension')}<div style="flex:1;display:flex;flex-direction:column">${rc}</div></div>${rps}`}
+
+function slideSalesStaff(){const staff=data.sales_staff.filter(s=>s.name);if(!staff.length)return mkTitle('Sales Staff Achievement')+'<div class="empty">No sales staff data entered</div>';return mkTitle('Sales Staff Achievement')+staff.map(s=>{const ach=pct(s.achieved,s.target),ok=parseFloat(ach)>=100,col=ok?C.green:C.accent;return`<div style="background:${C.card};border-radius:14px;padding:18px 22px;border:1px solid ${C.border};display:flex;gap:20px;align-items:center;margin-bottom:14px"><div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,${C.accent},${C.accentDim});display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:${C.bg};flex-shrink:0">${s.name.charAt(0).toUpperCase()}</div><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:14px;font-weight:600">${esc(s.name)}</span><span style="font-size:13px;font-weight:700;font-family:var(--mono);color:${col}">${ach}%</span></div>${mkProgress(s.achieved,s.target,col)}<div style="display:flex;gap:16px;margin-top:8px"><span style="font-size:11px;color:${C.textDim}">Target: <em style="font-style:normal;color:${C.textMuted};font-family:var(--mono)">${fmtRp(s.target)}</em></span><span style="font-size:11px;color:${C.textDim}">Achieved: <em style="font-style:normal;color:${C.textMuted};font-family:var(--mono)">${fmtRp(s.achieved)}</em></span><span style="font-size:11px;color:${C.textDim}">Deals: <em style="font-style:normal;color:${C.textMuted};font-family:var(--mono)">${s.deals}</em></span></div></div></div>`}).join('')}
+
+function slideAfterSalesStaff(){const staff=data.aftersales_staff.filter(s=>s.name);if(!staff.length)return mkTitle('After Sales Staff Achievement',C.purple)+'<div class="empty">No after sales staff data entered</div>';return mkTitle('After Sales Staff Achievement',C.purple)+staff.map(s=>{const ach=pct(s.retention_achieved,s.retention_target),ok=parseFloat(ach)>=100,col=ok?C.green:C.purple;return`<div style="background:${C.card};border-radius:14px;padding:18px 22px;border:1px solid ${C.border};display:flex;gap:20px;align-items:center;margin-bottom:14px"><div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,${C.purple},${C.purpleDim});display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0">${s.name.charAt(0).toUpperCase()}</div><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:14px;font-weight:600">${esc(s.name)}</span><span style="font-size:13px;font-weight:700;font-family:var(--mono);color:${col}">${ach}%</span></div>${mkProgress(s.retention_achieved,s.retention_target,col)}<div style="display:flex;gap:16px;margin-top:8px"><span style="font-size:11px;color:${C.textDim}">Target: <em style="font-style:normal;color:${C.textMuted};font-family:var(--mono)">${fmt(s.retention_target)}</em></span><span style="font-size:11px;color:${C.textDim}">Achieved: <em style="font-style:normal;color:${C.textMuted};font-family:var(--mono)">${fmt(s.retention_achieved)}</em></span><span style="font-size:11px;color:${C.textDim}">Follow Ups: <em style="font-style:normal;color:${C.textMuted};font-family:var(--mono)">${s.followups}</em></span><span style="font-size:11px;color:${C.textDim}">Resolved: <em style="font-style:normal;color:${C.textMuted};font-family:var(--mono)">${s.resolutions}</em></span></div></div></div>`}).join('')}
+
+function slideSummary(){const tR=BRANCHES.reduce((s,b)=>s+(parseFloat(data.branches[b].revenue)||0),0),tP=BRANCHES.reduce((s,b)=>s+(parseFloat(data.branches[b].profit)||0),0),tE=BRANCHES.reduce((s,b)=>s+(parseFloat(data.branches[b].expenses)||0),0);const rows=BRANCHES.map(b=>{const bd=data.branches[b];return[b,fmtRp(bd.revenue),fmtRp(bd.profit),fmtRp(bd.expenses),pct(bd.profit,bd.revenue)+'%']});let sb=data.summary?`<div style="margin-top:24px;background:${C.card};border-radius:14px;padding:20px 24px;border:1px solid ${C.border};border-left:4px solid ${C.accent}"><div style="font-size:12px;color:${C.textMuted};margin-bottom:8px">Executive Summary</div><p style="font-size:14px;line-height:1.7;white-space:pre-wrap;margin:0">${esc(data.summary)}</p></div>`:'';return`${mkTitle(`Ringkasan Report — ${data.month} ${data.year}`)}<div style="display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap">${mkStatCard('Total Revenue',fmtRp(tR),null,C.accent)}${mkStatCard('Total Profit',fmtRp(tP),null,C.green)}${mkStatCard('Total Expenses',fmtRp(tE),null,C.red)}</div>${mkTable(['Cabang','Revenue','Profit','Expenses','Margin'],rows)}${sb}`}
+
+function slidePlans(){const dn=data.done_projects.filter(p=>p.title),pl=data.future_plans.filter(p=>p.title),sc={'Selesai':C.green,'In Progress':C.accent,'On Hold':C.textDim};
+const dH=dn.length?dn.map(p=>{const c=sc[p.status]||C.textDim;return`<div style="background:${C.card};border-radius:12px;padding:16px 18px;border:1px solid ${C.border};border-left:3px solid ${c};margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:13px;font-weight:600">${esc(p.title)}</span>${mkBadge(p.status,c)}</div><div style="font-size:11px;color:${C.textDim};margin-bottom:4px">${esc(p.branch)}</div>${p.description?`<div style="font-size:12px;color:${C.textMuted};line-height:1.5">${esc(p.description)}</div>`:''}</div>`}).join(''):'<div class="empty">Tidak ada project</div>';
+const pH=pl.length?pl.map(p=>`<div style="background:${C.card};border-radius:12px;padding:16px 18px;border:1px solid ${C.border};border-left:3px solid ${C.blue};margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:13px;font-weight:600">${esc(p.title)}</span>${p.timeline?mkBadge(p.timeline,C.blue):''}</div><div style="font-size:11px;color:${C.textDim};margin-bottom:4px">${esc(p.branch)}</div>${p.description?`<div style="font-size:12px;color:${C.textMuted};line-height:1.5">${esc(p.description)}</div>`:''}</div>`).join(''):'<div class="empty">Belum ada rencana</div>';
+return`<div style="display:flex;gap:28px"><div style="flex:1">${mkTitle('What We Have Done',C.green)}${dH}</div><div style="flex:1">${mkTitle('Future Plans',C.blue)}${pH}</div></div>`}
+
+// ── Layout ──
+function renderEntryMode(){const slides=getSlides(),total=slides.length,sc=slides[currentSlide]?slides[currentSlide].html():'';let dots=slides.map((_,i)=>`<button class="nav-dot ${i===currentSlide?'active':''}" onclick="goSlide(${i})"></button>`).join('');return`<div class="main-entry"><div class="panel-form"><div class="tabs">${['general','branch','staff','plans'].map(t=>`<button class="tab ${activeTab===t?'active':''}" onclick="setTab('${t}')">${t==='general'?'General':t==='branch'?'Per Cabang':t==='staff'?'Staff':'Plans'}</button>`).join('')}</div><div class="tab-content">${renderFormTab()}</div></div><div class="panel-preview"><div class="nav-bar"><div style="font-size:13px;color:${C.textDim};font-weight:500">Live Preview</div><div style="display:flex;gap:6px;align-items:center"><button class="nav-btn" onclick="goSlide(${currentSlide-1})" ${currentSlide===0?'disabled':''}>&#8592;</button><span class="nav-counter">${currentSlide+1} / ${total}</span><button class="nav-btn" onclick="goSlide(${currentSlide+1})" ${currentSlide===total-1?'disabled':''}>&#8594;</button></div></div><div style="max-width:900px;margin:0 auto">${slideWrap(sc,currentSlide+1,total)}</div><div class="nav-dots">${dots}</div></div></div>`}
+
+function renderPresentMode(){const slides=getSlides(),total=slides.length,sc=slides[currentSlide]?slides[currentSlide].html():'';let dots=slides.map((_,i)=>`<button class="nav-dot ${i===currentSlide?'active':''}" onclick="goSlide(${i})" style="width:8px;height:8px;border-radius:4px"></button>`).join('');return`<div class="present-mode"><div style="max-width:960px;width:100%">${slideWrap(sc,currentSlide+1,total)}</div><div style="display:flex;gap:12px;margin-top:24px;align-items:center"><button class="btn" style="padding:10px 20px;border:1px solid ${C.border};background:${C.card};color:${currentSlide===0?C.textDim:C.text}" onclick="goSlide(${currentSlide-1})" ${currentSlide===0?'disabled':''}>&#8592; Previous</button><span class="nav-counter" style="min-width:60px;text-align:center">${currentSlide+1} / ${total}</span><button class="btn" style="padding:10px 20px;background:${currentSlide===total-1?C.borderLight:C.accent};color:${currentSlide===total-1?C.textDim:C.bg}" onclick="goSlide(${currentSlide+1})" ${currentSlide===total-1?'disabled':''}>Next &#8594;</button></div><div class="nav-dots" style="margin-top:16px">${dots}</div><p style="font-size:11px;color:${C.textDim};margin-top:16px">Use &#8592; &#8594; arrow keys to navigate</p></div>`}
+
+// ── Form ──
+function renderFormTab(){if(activeTab==='general')return renderGeneralTab();if(activeTab==='branch')return renderBranchTab();if(activeTab==='staff')return renderStaffTab();if(activeTab==='plans')return renderPlansTab();return''}
+function mkField(l,v,oc,o={}){const cls=o.mono?'mono':'';return`<div class="field"${o.width?` style="flex:none;width:${o.width}"`:``}>${l?`<label>${esc(l)}</label>`:``}<input class="${cls}" type="${o.type||'text'}" value="${esc(v)}" placeholder="${esc(o.placeholder||l||'')}" oninput="${oc}(this.value)" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='#1F2937'"/></div>`}
+function mkSel(l,v,oc,opts){return`<div class="field">${l?`<label>${esc(l)}</label>`:``}<select onchange="${oc}(this.value)">${opts.map(o=>`<option value="${esc(o)}"${o===v?' selected':''}>${esc(o)}</option>`).join('')}</select></div>`}
+function mkTA(l,v,oc,r=4){return`<div class="field">${l?`<label>${esc(l)}</label>`:``}<textarea rows="${r}" oninput="${oc}(this.value)" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='#1F2937'">${esc(v)}</textarea></div>`}
+function fsH(t,c){return`<div class="form-section-header"><div class="form-section-bar" style="background:${c}"></div><h3 class="form-section-title">${esc(t)}</h3></div>`}
+
+function renderGeneralTab(){return`<div class="form-section">${fsH('Periode Report',C.accent)}<div class="form-section-body"><div class="field-row">${mkSel('Bulan',data.month,'updateMonth',MONTHS)}${mkField('Tahun',data.year,'updateYear',{mono:true})}</div></div></div><div class="form-section">${fsH('Ringkasan Report',C.accent)}<div class="form-section-body">${mkTA('Executive Summary',data.summary,'updateSummary',6)}</div></div>`}
+
+function renderBranchTab(){const bd=data.branches[activeBranch],bT=BRANCHES.map(b=>`<button class="branch-tab ${activeBranch===b?'active':''}" onclick="setBranch('${b}')">${b}</button>`).join('');
+const dynR=(an,items,fn)=>items.map((item,i)=>{const rm=items.length>1?`<button class="btn-remove" onclick="removeBranchArr('${an}',${i})">×</button>`:'';return`<div class="field-row-item">${fn(item,i)}${rm}</div>`}).join('');
+return`<div class="branch-tabs">${bT}</div>
+<div class="form-section">${fsH('Revenue',C.accent)}<div class="form-section-body"><div class="field-row">${mkField('Revenue Bulan Ini',bd.revenue,"updateBranch('revenue')",{mono:true,placeholder:'e.g. 150000000'})}${mkField('Target Revenue',bd.target_revenue,"updateBranch('target_revenue')",{mono:true})}${mkField('Revenue Bulan Lalu',bd.prev_revenue,"updateBranch('prev_revenue')",{mono:true})}</div></div></div>
+<div class="form-section">${fsH('Profit',C.green)}<div class="form-section-body"><div class="field-row">${mkField('Profit Bulan Ini',bd.profit,"updateBranch('profit')",{mono:true})}${mkField('Target Profit',bd.target_profit,"updateBranch('target_profit')",{mono:true})}${mkField('Profit Bulan Lalu',bd.prev_profit,"updateBranch('prev_profit')",{mono:true})}</div></div></div>
+<div class="form-section">${fsH('Expenses',C.red)}<div class="form-section-body"><div class="field-row">${mkField('Total Expenses',bd.expenses,"updateBranch('expenses')",{mono:true})}${mkField('Expenses Bulan Lalu',bd.prev_expenses,"updateBranch('prev_expenses')",{mono:true})}</div><div class="hint">Breakdown Kategori:</div>${dynR('expense_categories',bd.expense_categories,(c,i)=>mkField(i===0?'Kategori':'',c.name,`updateBranchArr('expense_categories',${i},'name')`,{placeholder:'e.g. Gaji, Sewa'})+mkField(i===0?'Jumlah':'',c.amount,`updateBranchArr('expense_categories',${i},'amount')`,{mono:true,placeholder:'Nominal'}))}<button class="btn-add" onclick="addBranchArr('expense_categories',{name:'',amount:''})">+ Tambah Kategori</button></div></div>
+<div class="form-section">${fsH('Transaction Analysis',C.blue)}<div class="form-section-body"><div class="field-row">${mkField('Jumlah Kelas Regular',bd.regular_count,"updateBranch('regular_count')",{mono:true})}${mkField('Jumlah Kelas Private',bd.private_count,"updateBranch('private_count')",{mono:true})}</div><div class="field-row">${mkField('Register Baru (Regular)',bd.regular_new,"updateBranch('regular_new')",{mono:true})}${mkField('Perpanjangan (Regular)',bd.regular_ext,"updateBranch('regular_ext')",{mono:true})}</div><div class="field-row">${mkField('Register Baru (Private)',bd.private_new,"updateBranch('private_new')",{mono:true})}${mkField('Perpanjangan (Private)',bd.private_ext,"updateBranch('private_ext')",{mono:true})}</div>
+<div class="hint" style="margin-top:8px">Top Program - Regular:</div>${dynR('top_regular',bd.top_regular,(p,i)=>mkSel(i===0?'Program':'',p.program,`updateBranchArr('top_regular',${i},'program')`,PROG_REG)+mkField(i===0?'Jumlah':'',p.count,`updateBranchArr('top_regular',${i},'count')`,{mono:true,width:'100px'}))}<button class="btn-add" onclick="addBranchArr('top_regular',{program:'${PROG_REG[0]}',count:''})">+ Tambah Program Regular</button>
+<div class="hint" style="margin-top:8px">Top Program - Private:</div>${dynR('top_private',bd.top_private,(p,i)=>mkSel(i===0?'Program':'',p.program,`updateBranchArr('top_private',${i},'program')`,PROG_PRV)+mkField(i===0?'Jumlah':'',p.count,`updateBranchArr('top_private',${i},'count')`,{mono:true,width:'100px'}))}<button class="btn-add" onclick="addBranchArr('top_private',{program:'${PROG_PRV[0]}',count:''})">+ Tambah Program Private</button>
+<div class="hint" style="margin-top:8px">Revenue by Program:</div>${dynR('revenue_by_program',bd.revenue_by_program,(p,i)=>mkField(i===0?'Nama Program':'',p.program,`updateBranchArr('revenue_by_program',${i},'program')`,{placeholder:'Nama Program'})+mkField(i===0?'Revenue':'',p.revenue,`updateBranchArr('revenue_by_program',${i},'revenue')`,{mono:true,placeholder:'Nominal'}))}<button class="btn-add" onclick="addBranchArr('revenue_by_program',{program:'',revenue:''})">+ Tambah Program Revenue</button></div></div>`}
+
+function renderStaffTab(){return`<div class="form-section">${fsH('Sales Staff Achievement',C.accent)}<div class="form-section-body">${data.sales_staff.map((s,i)=>`<div class="staff-card"><div class="staff-row"><span class="staff-num">#${i+1}</span>${mkField('',s.name,`updateArr('sales_staff',${i},'name')`,{placeholder:'Nama Staff'})}${data.sales_staff.length>1?`<button class="btn-remove" onclick="removeArr('sales_staff',${i})">×</button>`:''}</div><div class="staff-fields">${mkField('Target',s.target,`updateArr('sales_staff',${i},'target')`,{mono:true})}${mkField('Achieved',s.achieved,`updateArr('sales_staff',${i},'achieved')`,{mono:true})}${mkField('Deals',s.deals,`updateArr('sales_staff',${i},'deals')`,{mono:true})}</div></div>`).join('')}<button class="btn-add" onclick="addArr('sales_staff',{name:'',target:'',achieved:'',deals:''})">+ Tambah Sales Staff</button></div></div>
+<div class="form-section">${fsH('After Sales Staff Achievement',C.purple)}<div class="form-section-body">${data.aftersales_staff.map((s,i)=>`<div class="staff-card"><div class="staff-row"><span class="staff-num">#${i+1}</span>${mkField('',s.name,`updateArr('aftersales_staff',${i},'name')`,{placeholder:'Nama Staff'})}${data.aftersales_staff.length>1?`<button class="btn-remove" onclick="removeArr('aftersales_staff',${i})">×</button>`:''}</div><div class="staff-fields">${mkField('Retention Target',s.retention_target,`updateArr('aftersales_staff',${i},'retention_target')`,{mono:true})}${mkField('Retention Achieved',s.retention_achieved,`updateArr('aftersales_staff',${i},'retention_achieved')`,{mono:true})}${mkField('Follow Ups',s.followups,`updateArr('aftersales_staff',${i},'followups')`,{mono:true})}${mkField('Resolutions',s.resolutions,`updateArr('aftersales_staff',${i},'resolutions')`,{mono:true})}</div></div>`).join('')}<button class="btn-add" onclick="addArr('aftersales_staff',{name:'',retention_target:'',retention_achieved:'',followups:'',resolutions:''})">+ Tambah After Sales Staff</button></div></div>`}
+
+function renderPlansTab(){return`<div class="form-section">${fsH('What We Have Done',C.green)}<div class="form-section-body">${data.done_projects.map((p,i)=>`<div class="staff-card"><div class="field-row-item">${mkField('Judul Project',p.title,`updateArr('done_projects',${i},'title')`)}${mkSel('Cabang',p.branch,`updateArr('done_projects',${i},'branch')`,BRANCHES)}${mkSel('Status',p.status,`updateArr('done_projects',${i},'status')`,['Selesai','In Progress','On Hold'])}${data.done_projects.length>1?`<button class="btn-remove" onclick="removeArr('done_projects',${i})">×</button>`:''}</div>${mkTA('Deskripsi',p.description,`updateArr('done_projects',${i},'description')`,2)}</div>`).join('')}<button class="btn-add" onclick="addArr('done_projects',{title:'',description:'',branch:'${BRANCHES[0]}',status:'Selesai'})">+ Tambah Project</button></div></div>
+<div class="form-section">${fsH('Future Plans',C.blue)}<div class="form-section-body">${data.future_plans.map((p,i)=>`<div class="staff-card"><div class="field-row-item">${mkField('Judul Rencana',p.title,`updateArr('future_plans',${i},'title')`)}${mkSel('Cabang',p.branch,`updateArr('future_plans',${i},'branch')`,BRANCHES)}${mkField('Timeline',p.timeline,`updateArr('future_plans',${i},'timeline')`,{placeholder:'e.g. Feb 2025'})}${data.future_plans.length>1?`<button class="btn-remove" onclick="removeArr('future_plans',${i})">×</button>`:''}</div>${mkTA('Deskripsi',p.description,`updateArr('future_plans',${i},'description')`,2)}</div>`).join('')}<button class="btn-add" onclick="addArr('future_plans',{title:'',description:'',branch:'${BRANCHES[0]}',timeline:''})">+ Tambah Rencana</button></div></div>`}
+
+// ── Data Updates ──
+function updateMonth(v){data.month=v;render()}
+function updateYear(v){data.year=v;render()}
+function updateSummary(v){data.summary=v}
+window.updateBranch=function(f){return function(v){data.branches[activeBranch][f]=v;renderPreviewOnly()}}
+window.updateBranchArr=function(an,idx,f){return function(v){data.branches[activeBranch][an][idx][f]=v;renderPreviewOnly()}}
+function addBranchArr(an,t){data.branches[activeBranch][an].push(JSON.parse(JSON.stringify(t)));render()}
+function removeBranchArr(an,idx){data.branches[activeBranch][an].splice(idx,1);render()}
+window.updateArr=function(b,idx,f){return function(v){data[b][idx][f]=v;renderPreviewOnly()}}
+function addArr(b,t){data[b].push(JSON.parse(JSON.stringify(t)));render()}
+function removeArr(b,idx){data[b].splice(idx,1);render()}
+function renderPreviewOnly(){if(mode!=='entry')return;const slides=getSlides(),total=slides.length,sc=slides[currentSlide]?slides[currentSlide].html():'';const el=document.querySelector('.panel-preview .slide');if(el)el.innerHTML=`<div class="slide-accent"></div>${sc}<div class="slide-num">${currentSlide+1} / ${total}</div>`}
+
+// ── Nav ──
+function setMode(m){mode=m;currentSlide=Math.min(currentSlide,getSlides().length-1);render()}
+function setTab(t){activeTab=t;render()}
+function setBranch(b){activeBranch=b;render()}
+function goSlide(n){const total=getSlides().length;currentSlide=Math.max(0,Math.min(total-1,n));render()}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;if(e.key==='ArrowRight'||e.key==='ArrowDown'){goSlide(currentSlide+1);e.preventDefault()}if(e.key==='ArrowLeft'||e.key==='ArrowUp'){goSlide(currentSlide-1);e.preventDefault()}});
+
+// ── Import/Export ──
+function exportJSON(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`GE-Bekasi-Report-${data.month}-${data.year}.json`;a.click();URL.revokeObjectURL(url)}
+function importJSON(){const input=document.createElement('input');input.type='file';input.accept='.json';input.onchange=e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{try{data=JSON.parse(ev.target.result);render()}catch{alert('Invalid JSON file')}};reader.readAsText(file)};input.click()}
+
+// ── Guide Modal ──
+let guideOpen=false,guideTab='revenue';
+function toggleGuide(){guideOpen=!guideOpen;renderGuide()}
+function setGuideTab(t){guideTab=t;renderGuide()}
+function renderGuide(){
+  let existing=document.getElementById('guideOverlay');
+  if(existing)existing.remove();
+  if(!guideOpen)return;
+  const tabs=[
+    {id:'revenue',label:'Revenue'},
+    {id:'profit',label:'Profit'},
+    {id:'expenses',label:'Expenses'},
+    {id:'transactions',label:'Transaksi'},
+    {id:'sales',label:'Sales Staff'},
+    {id:'aftersales',label:'After Sales'},
+    {id:'plans',label:'Plans'},
+    {id:'general',label:'General'},
+  ];
+  const sections={
+    revenue:`
+      ${gi('Revenue Bulan Ini','Total pendapatan kotor (gross revenue) cabang di bulan ini. Masukkan angka tanpa titik/koma.','150000000')}
+      ${gi('Target Revenue','Target pendapatan yang sudah ditetapkan untuk bulan ini.','200000000')}
+      ${gi('Revenue Bulan Lalu','Total pendapatan di bulan sebelumnya. Digunakan untuk menghitung growth rate (%).','130000000')}
+    `,
+    profit:`
+      ${gi('Profit Bulan Ini','Keuntungan bersih (net profit) setelah dikurangi semua biaya operasional.','80000000')}
+      ${gi('Target Profit','Target keuntungan bersih yang sudah ditetapkan untuk bulan ini.','100000000')}
+      ${gi('Profit Bulan Lalu','Keuntungan bersih bulan sebelumnya. Digunakan untuk menghitung growth rate.','70000000')}
+      ${gi('Profit Margin (Auto)','Dihitung otomatis: (Profit / Revenue) × 100%. Tidak perlu diisi manual.','-')}
+    `,
+    expenses:`
+      ${gi('Total Expenses','Total seluruh pengeluaran operasional cabang di bulan ini.','70000000')}
+      ${gi('Expenses Bulan Lalu','Total pengeluaran bulan sebelumnya untuk perbandingan.','65000000')}
+      ${gi('Breakdown Kategori','Rincian per kategori pengeluaran. Klik "+ Tambah Kategori" untuk menambah baris.','Gaji: 40000000, Sewa: 15000000, Marketing: 10000000')}
+      ${gi('Expense Ratio (Auto)','Dihitung otomatis: (Expenses / Revenue) × 100%. Semakin rendah semakin baik.','-')}
+    `,
+    transactions:`
+      ${gi('Jumlah Kelas Regular','Total jumlah kelas regular yang berjalan di bulan ini (bukan siswa, tapi kelas).','45')}
+      ${gi('Jumlah Kelas Private','Total jumlah kelas private yang berjalan di bulan ini.','12')}
+      ${gi('Register Baru (Regular)','Jumlah siswa BARU yang mendaftar kelas regular di bulan ini.','31')}
+      ${gi('Perpanjangan (Regular)','Jumlah siswa yang MEMPERPANJANG/extend kelas regular di bulan ini.','15')}
+      ${gi('Register Baru (Private)','Jumlah siswa BARU yang mendaftar kelas private di bulan ini.','5')}
+      ${gi('Perpanjangan (Private)','Jumlah siswa yang MEMPERPANJANG/extend kelas private di bulan ini.','3')}
+      ${gi('Top Program - Regular','Pilih program dari dropdown dan isi jumlah siswa yang mengambil program tersebut. Diurutkan otomatis dari yang terbanyak.','English for Children: 31')}
+      ${gi('Top Program - Private','Sama seperti di atas, tapi untuk kelas private.','Basic Communication: 2')}
+      ${gi('Revenue by Program','Breakdown pendapatan per program. Isi nama program dan nominal revenue-nya.','English for Children: 50000000')}
+    `,
+    sales:`
+      ${gi('Nama Staff','Nama lengkap sales staff.','Budi Santoso')}
+      ${gi('Target','Nominal target revenue yang diberikan ke staff ini untuk bulan ini (dalam Rupiah).','50000000')}
+      ${gi('Achieved','Nominal pencapaian actual/realisasi revenue staff ini di bulan ini (dalam Rupiah).','45000000')}
+      ${gi('Deals','Jumlah transaksi/closing yang berhasil dilakukan staff ini. Contoh: 15 deals = 15 siswa baru yang berhasil closing.','15')}
+      ${gi('Achievement % (Auto)','Dihitung otomatis: (Achieved / Target) × 100%.','-')}
+    `,
+    aftersales:`
+      ${gi('Nama Staff','Nama lengkap after sales staff.','Rina Kartika')}
+      ${gi('Retention Target','Nominal target retention/pendapatan dari perpanjangan yang diberikan ke staff ini (dalam Rupiah).','30000000')}
+      ${gi('Retention Achieved','Nominal pencapaian actual retention/pendapatan dari perpanjangan staff ini (dalam Rupiah).','28000000')}
+      ${gi('Follow Ups','Jumlah siswa/prospek yang di-follow up oleh staff ini di bulan ini (reminder perpanjangan, check satisfaction, dsb).','45')}
+      ${gi('Resolutions','Jumlah masalah/keluhan siswa yang berhasil diselesaikan oleh staff ini (komplain jadwal, pindah kelas, refund request, dsb).','12')}
+      ${gi('Achievement % (Auto)','Dihitung otomatis: (Retention Achieved / Retention Target) × 100%.','-')}
+    `,
+    plans:`
+      ${gi('Judul Project (Done)','Nama project/kegiatan yang sudah dikerjakan bulan ini.','Redesign Landing Page')}
+      ${gi('Cabang','Cabang mana yang terkait dengan project ini.','Jatibening Bekasi')}
+      ${gi('Status','Status project: Selesai, In Progress, atau On Hold.','Selesai')}
+      ${gi('Deskripsi','Penjelasan singkat tentang apa yang dikerjakan dan hasilnya.','Redesign halaman utama website...')}
+      ${gi('Judul Rencana (Future)','Nama rencana/project yang akan dikerjakan bulan depan.','Launch Campaign Ramadhan')}
+      ${gi('Timeline','Perkiraan waktu pelaksanaan.','Mar 2025')}
+    `,
+    general:`
+      ${gi('Bulan & Tahun','Periode laporan. Muncul di cover slide dan judul ringkasan.','Januari 2025')}
+      ${gi('Executive Summary','Rangkuman keseluruhan performa bulan ini. Bisa berisi highlight pencapaian, tantangan, dan catatan penting. Muncul di slide Ringkasan.','Bulan ini revenue meningkat 15%...')}
+      ${gi('Import / Export JSON','Export untuk menyimpan data yang sudah diisi sebagai file JSON. Import untuk memuat data yang sudah disimpan sebelumnya. Berguna untuk re-use template tiap bulan.','-')}
+    `,
   };
-}
-function defaultData() {
-  const d = {
-    month: MONTHS[new Date().getMonth()],
-    year: String(new Date().getFullYear()),
-    branches: {},
-    sales_staff: [{name:"",target:"",achieved:"",deals:""}],
-    aftersales_staff: [{name:"",retention_target:"",retention_achieved:"",followups:"",resolutions:""}],
-    summary: "",
-    done_projects: [{title:"",description:"",branch:BRANCHES[0],status:"Selesai"}],
-    future_plans: [{title:"",description:"",branch:BRANCHES[0],timeline:""}],
-  };
-  BRANCHES.forEach(b => d.branches[b] = defaultBranch());
-  return d;
-}
-
-let data = defaultData();
-let mode = "entry";
-let currentSlide = 0;
-let activeTab = "general";
-let activeBranch = BRANCHES[0];
-
-// ═══════════════════════════════════════════════
-// UTILITIES
-// ═══════════════════════════════════════════════
-const fmt = n => { const v = parseFloat(n); return isNaN(v) ? "0" : new Intl.NumberFormat("id-ID").format(v); };
-const fmtRp = n => `Rp ${fmt(n)}`;
-const pct = (a,b) => { const na=parseFloat(a),nb=parseFloat(b); return (isNaN(na)||isNaN(nb)||nb===0) ? "0" : ((na/nb)*100).toFixed(1); };
-const growthPct = (c,p) => { const nc=parseFloat(c),np=parseFloat(p); return (isNaN(nc)||isNaN(np)||np===0) ? 0 : (((nc-np)/np)*100).toFixed(1); };
-const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-
-// ═══════════════════════════════════════════════
-// RENDER ENGINE
-// ═══════════════════════════════════════════════
-function render() {
-  const app = document.getElementById('app');
-  document.getElementById('btnEntry').className = `btn ${mode==='entry'?'btn-active':'btn-inactive'}`;
-  document.getElementById('btnPresent').className = `btn ${mode==='present'?'btn-active':'btn-inactive'}`;
-
-  if (mode === 'entry') {
-    app.innerHTML = renderEntryMode();
-  } else {
-    app.innerHTML = renderPresentMode();
-  }
-}
-
-// ═══════════════════════════════════════════════
-// SLIDE BUILDERS
-// ═══════════════════════════════════════════════
-function getSlides() {
-  const s = [];
-  s.push({id:'cover', html: slideCover});
-  BRANCHES.forEach(b => {
-    s.push({id:`rev-${b}`, html: () => slideRevenue(b)});
-    s.push({id:`prf-${b}`, html: () => slideProfit(b)});
-    s.push({id:`exp-${b}`, html: () => slideExpenses(b)});
-    s.push({id:`trx-${b}`, html: () => slideTransactions(b)});
-  });
-  s.push({id:'sales', html: slideSalesStaff});
-  s.push({id:'aftersales', html: slideAfterSalesStaff});
-  s.push({id:'summary', html: slideSummary});
-  s.push({id:'plans', html: slidePlans});
-  return s;
-}
-
-function slideWrap(content, sn, ts) {
-  return `<div class="slide"><div class="slide-accent"></div>${content}<div class="slide-num">${sn} / ${ts}</div></div>`;
-}
-
-function mkBadge(text, color='var(--accent)') {
-  return `<span class="badge" style="background:${color}22;color:${color}">${esc(text)}</span>`;
-}
-
-function mkStatCard(label, value, sub, color='var(--accent)') {
-  const subColor = sub && sub.startsWith('-') ? 'var(--red)' : 'var(--green)';
-  return `<div class="stat-card"><div class="stat-card-bar" style="background:${color}"></div><div class="stat-label">${esc(label)}</div><div class="stat-value" style="color:var(--text)">${value}</div>${sub?`<div class="stat-sub" style="color:${subColor}">${esc(sub)}</div>`:''}</div>`;
-}
-
-function mkSectionTitle(text, accent='var(--accent)') {
-  return `<div class="section-title"><div class="section-title-bar" style="background:${accent}"></div><h2>${esc(text)}</h2></div>`;
-}
-
-function mkProgressBar(val, max, color='var(--accent)', h=10) {
-  const p = Math.min(parseFloat(pct(val,max)),100);
-  return `<div class="progress-bar" style="height:${h}px"><div class="progress-fill" style="width:${p}%;background:linear-gradient(90deg,${color},${color}CC);height:100%"></div></div>`;
-}
-
-function mkBarChart(items, color='var(--accent)', height=160) {
-  const maxV = Math.max(...items.map(d=>parseFloat(d.value)||0),1);
-  let bars = '';
-  items.forEach(d => {
-    const h = ((parseFloat(d.value)||0)/maxV)*(height-30);
-    bars += `<div class="bar-col"><span class="bar-val">${fmt(d.value)}</span><div class="bar-fill" style="height:${Math.max(h,4)}px;background:linear-gradient(180deg,${color},${color}88)"></div><span class="bar-label">${esc(d.label)}</span></div>`;
-  });
-  return `<div class="bar-chart" style="height:${height}px">${bars}</div>`;
-}
-
-function mkDonut(segments, size=140) {
-  const total = segments.reduce((s,x)=>s+(parseFloat(x.value)||0),0);
-  const r = size/2-10, cx=size/2, cy=size/2, sw=18, circ=2*Math.PI*r;
-  let cum=0;
-  let paths = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--input-bg)" stroke-width="${sw}"/>`;
-  segments.forEach(seg => {
-    const p = total>0 ? (parseFloat(seg.value)||0)/total : 0;
-    const offset = circ*(1-cum);
-    cum += p;
-    paths += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${sw}" stroke-dasharray="${circ*p} ${circ*(1-p)}" stroke-dashoffset="${offset}" stroke-linecap="round"/>`;
-  });
-  let legend = segments.map(seg =>
-    `<div class="donut-item"><div class="donut-dot" style="background:${seg.color}"></div><span class="donut-label">${esc(seg.label)}</span><span class="donut-val">${fmt(seg.value)}</span></div>`
-  ).join('');
-  return `<div class="donut-wrap"><svg width="${size}" height="${size}" style="transform:rotate(-90deg)">${paths}</svg><div class="donut-legend">${legend}</div></div>`;
-}
-
-function mkMiniTable(headers, rows, accent='var(--accent)') {
-  let ths = headers.map((h,i) => `<th${i===0?'':' style="text-align:right"'} style="border-bottom:2px solid ${accent}33;${i===0?'text-align:left':'text-align:right'}">${esc(h)}</th>`).join('');
-  let trs = rows.map((row,ri) => {
-    let tds = row.map((cell,ci) => `<td${ci===0?'':` style="text-align:right"`}>${esc(cell)}</td>`).join('');
-    return `<tr>${tds}</tr>`;
-  }).join('');
-  return `<div class="mini-table"><table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
-}
-
-// ── Cover Slide ──
-function slideCover() {
-  const badges = BRANCHES.map(b => mkBadge(b, 'var(--text-muted)')).join('');
-  return `<div class="cover">${mkBadge('Monthly Report')}<h1>Golden English Bekasi</h1><p class="period">${esc(data.month)} ${esc(data.year)}</p><div class="branches">${badges}</div></div>`;
-}
-
-// ── Revenue Slide ──
-function slideRevenue(branch) {
-  const bd = data.branches[branch];
-  const g = growthPct(bd.revenue, bd.prev_revenue);
-  const ach = pct(bd.revenue, bd.target_revenue);
-  const achOk = parseFloat(ach) >= 100;
-  return `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-      ${mkSectionTitle('Revenue Performance')}${mkBadge(branch)}
-    </div>
-    <div class="stat-cards">
-      ${mkStatCard('Revenue', fmtRp(bd.revenue), `${g>=0?'+':''}${g}% vs bulan lalu`, 'var(--accent)')}
-      ${mkStatCard('Target', fmtRp(bd.target_revenue), null, 'var(--text-dim)')}
-      ${mkStatCard('Achievement', ach+'%', achOk?'Target tercapai ✓':'Below target', achOk?'var(--green)':'var(--red)')}
-    </div>
-    <div class="chart-box">
-      <div class="chart-label">Revenue vs Target</div>
-      ${mkBarChart([
-        {label:'Bulan Lalu',value:bd.prev_revenue},
-        {label:'Bulan Ini',value:bd.revenue},
-        {label:'Target',value:bd.target_revenue}
-      ], 'var(--accent)', 160)}
-    </div>`;
-}
-
-// ── Profit Slide ──
-function slideProfit(branch) {
-  const bd = data.branches[branch];
-  const g = growthPct(bd.profit, bd.prev_profit);
-  const ach = pct(bd.profit, bd.target_profit);
-  const margin = pct(bd.profit, bd.revenue);
-  const achOk = parseFloat(ach) >= 100;
-  return `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-      ${mkSectionTitle('Profit Performance','var(--green)')}${mkBadge(branch,'var(--green)')}
-    </div>
-    <div class="stat-cards">
-      ${mkStatCard('Profit', fmtRp(bd.profit), `${g>=0?'+':''}${g}% vs bulan lalu`, 'var(--green)')}
-      ${mkStatCard('Target', fmtRp(bd.target_profit), null, 'var(--text-dim)')}
-      ${mkStatCard('Profit Margin', margin+'%', null, 'var(--green)')}
-    </div>
-    <div style="display:flex;gap:16px">
-      <div class="chart-box" style="flex:1">
-        <div class="chart-label">Achievement</div>
-        <div style="font-size:36px;font-weight:700;color:${achOk?'var(--green)':'var(--accent)'};font-family:var(--mono);margin-bottom:12px">${ach}%</div>
-        ${mkProgressBar(bd.profit, bd.target_profit, achOk?'var(--green)':'var(--accent)', 12)}
-      </div>
-      <div class="chart-box" style="flex:1">
-        <div class="chart-label">Profit Comparison</div>
-        ${mkBarChart([
-          {label:'Bulan Lalu',value:bd.prev_profit},
-          {label:'Bulan Ini',value:bd.profit},
-          {label:'Target',value:bd.target_profit}
-        ], 'var(--green)', 120)}
-      </div>
-    </div>`;
-}
-
-// ── Expenses Slide ──
-function slideExpenses(branch) {
-  const bd = data.branches[branch];
-  const g = growthPct(bd.expenses, bd.prev_expenses);
-  const cats = bd.expense_categories.filter(c => c.name && c.amount);
-  const expColors = ['var(--red)','var(--accent)','var(--blue)','var(--purple)','var(--green)','#EC4899','#14B8A6'];
-  let catSection = '';
-  if (cats.length > 0) {
-    const donut = mkDonut(cats.map((c,i)=>({label:c.name,value:c.amount,color:expColors[i%expColors.length]})));
-    const table = mkMiniTable(['Kategori','Jumlah','%'], cats.map(c=>[c.name,fmtRp(c.amount),pct(c.amount,bd.expenses)+'%']), 'var(--red)');
-    catSection = `<div style="display:flex;gap:16px">
-      <div class="chart-box" style="flex:1"><div class="chart-label">Breakdown Kategori</div>${donut}</div>
-      <div class="chart-box" style="flex:1"><div class="chart-label">Detail</div>${table}</div>
-    </div>`;
-  }
-  return `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-      ${mkSectionTitle('Expenses','var(--red)')}${mkBadge(branch,'var(--red)')}
-    </div>
-    <div class="stat-cards">
-      ${mkStatCard('Total Expenses', fmtRp(bd.expenses), `${g>=0?'+':''}${g}% vs bulan lalu`, 'var(--red)')}
-      ${mkStatCard('Bulan Lalu', fmtRp(bd.prev_expenses), null, 'var(--text-dim)')}
-      ${mkStatCard('Expense Ratio', pct(bd.expenses,bd.revenue)+'%', 'dari revenue', 'var(--accent)')}
-    </div>
-    ${catSection}`;
-}
-
-// ── Transactions Slide ──
-function slideTransactions(branch) {
-  const bd = data.branches[branch];
-  const totalNew = (parseInt(bd.regular_new)||0)+(parseInt(bd.private_new)||0);
-  const totalExt = (parseInt(bd.regular_ext)||0)+(parseInt(bd.private_ext)||0);
-  const topReg = bd.top_regular.filter(p=>p.count).sort((a,b)=>(parseInt(b.count)||0)-(parseInt(a.count)||0));
-  const topPrv = bd.top_private.filter(p=>p.count).sort((a,b)=>(parseInt(b.count)||0)-(parseInt(a.count)||0));
-  const revProg = bd.revenue_by_program.filter(p=>p.program&&p.revenue);
-
-  const donut = mkDonut([
-    {label:'Baru (Reg)',value:bd.regular_new,color:'var(--blue)'},
-    {label:'Ext (Reg)',value:bd.regular_ext,color:'var(--blue-dim)'},
-    {label:'Baru (Prv)',value:bd.private_new,color:'var(--purple)'},
-    {label:'Ext (Prv)',value:bd.private_ext,color:'#7C3AED'},
-  ], 120);
-
-  let topRegHtml = topReg.map(p=>`<div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:12px">${esc(p.program)}</span><span style="font-size:12px;color:var(--blue);font-family:var(--mono);font-weight:600">${p.count}</span></div>`).join('');
-  let topPrvHtml = topPrv.map(p=>`<div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:12px">${esc(p.program)}</span><span style="font-size:12px;color:var(--purple);font-family:var(--mono);font-weight:600">${p.count}</span></div>`).join('');
-
-  let revProgSection = revProg.length > 0 ? `<div class="chart-box" style="margin-top:16px"><div class="chart-label">Revenue by Program</div>${mkBarChart(revProg.map(p=>({label:p.program,value:p.revenue})),'var(--accent)',130)}</div>` : '';
-
-  return `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-      ${mkSectionTitle('Transaction Analysis','var(--blue)')}${mkBadge(branch,'var(--blue)')}
-    </div>
-    <div class="stat-cards">
-      ${mkStatCard('Kelas Regular',fmt(bd.regular_count),null,'var(--blue)')}
-      ${mkStatCard('Kelas Private',fmt(bd.private_count),null,'var(--purple)')}
-      ${mkStatCard('Register Baru',fmt(totalNew),null,'var(--green)')}
-      ${mkStatCard('Perpanjangan',fmt(totalExt),null,'var(--accent)')}
-    </div>
-    <div style="display:flex;gap:16px">
-      <div class="chart-box" style="flex:1"><div class="chart-label">New vs Extension</div>${donut}</div>
-      <div style="flex:1;display:flex;flex-direction:column;gap:12px">
-        ${topRegHtml?`<div class="chart-box" style="flex:1"><div class="chart-label">Top Regular Programs</div>${topRegHtml}</div>`:''}
-        ${topPrvHtml?`<div class="chart-box" style="flex:1"><div class="chart-label">Top Private Programs</div>${topPrvHtml}</div>`:''}
-      </div>
-    </div>
-    ${revProgSection}`;
-}
-
-// ── Sales Staff Slide ──
-function slideSalesStaff() {
-  const staff = data.sales_staff.filter(s=>s.name);
-  if (!staff.length) return mkSectionTitle('Sales Staff Achievement') + '<div class="empty">No sales staff data entered</div>';
-  let cards = staff.map(s => {
-    const ach = pct(s.achieved, s.target);
-    const achOk = parseFloat(ach) >= 100;
-    return `<div class="staff-slide-card">
-      <div class="staff-avatar" style="background:linear-gradient(135deg,var(--accent),var(--accent-dim));color:var(--bg)">${s.name.charAt(0).toUpperCase()}</div>
-      <div class="staff-info">
-        <div class="staff-name-row"><span class="staff-name">${esc(s.name)}</span><span class="staff-pct" style="color:${achOk?'var(--green)':'var(--accent)'}">${ach}%</span></div>
-        ${mkProgressBar(s.achieved, s.target, achOk?'var(--green)':'var(--accent)')}
-        <div class="staff-meta"><span>Target: <em>${fmtRp(s.target)}</em></span><span>Achieved: <em>${fmtRp(s.achieved)}</em></span><span>Deals: <em>${s.deals}</em></span></div>
-      </div>
-    </div>`;
-  }).join('');
-  return mkSectionTitle('Sales Staff Achievement') + cards;
-}
-
-// ── After Sales Staff Slide ──
-function slideAfterSalesStaff() {
-  const staff = data.aftersales_staff.filter(s=>s.name);
-  if (!staff.length) return mkSectionTitle('After Sales Staff Achievement','var(--purple)') + '<div class="empty">No after sales staff data entered</div>';
-  let cards = staff.map(s => {
-    const ach = pct(s.retention_achieved, s.retention_target);
-    const achOk = parseFloat(ach) >= 100;
-    return `<div class="staff-slide-card">
-      <div class="staff-avatar" style="background:linear-gradient(135deg,var(--purple),#7C3AED);color:#fff">${s.name.charAt(0).toUpperCase()}</div>
-      <div class="staff-info">
-        <div class="staff-name-row"><span class="staff-name">${esc(s.name)}</span><span class="staff-pct" style="color:${achOk?'var(--green)':'var(--purple)'}">${ach}%</span></div>
-        ${mkProgressBar(s.retention_achieved, s.retention_target, achOk?'var(--green)':'var(--purple)')}
-        <div class="staff-meta"><span>Target: <em>${fmt(s.retention_target)}</em></span><span>Achieved: <em>${fmt(s.retention_achieved)}</em></span><span>Follow Ups: <em>${s.followups}</em></span><span>Resolved: <em>${s.resolutions}</em></span></div>
-      </div>
-    </div>`;
-  }).join('');
-  return mkSectionTitle('After Sales Staff Achievement','var(--purple)') + cards;
-}
-
-// ── Summary Slide ──
-function slideSummary() {
-  const totalRev = BRANCHES.reduce((s,b)=>s+(parseFloat(data.branches[b].revenue)||0),0);
-  const totalProfit = BRANCHES.reduce((s,b)=>s+(parseFloat(data.branches[b].profit)||0),0);
-  const totalExp = BRANCHES.reduce((s,b)=>s+(parseFloat(data.branches[b].expenses)||0),0);
-  const rows = BRANCHES.map(b => {
-    const bd = data.branches[b];
-    return [b, fmtRp(bd.revenue), fmtRp(bd.profit), fmtRp(bd.expenses), pct(bd.profit,bd.revenue)+'%'];
-  });
-  let summaryBox = data.summary ? `<div class="summary-box"><div class="summary-label">Executive Summary</div><p class="summary-text">${esc(data.summary)}</p></div>` : '';
-  return `
-    ${mkSectionTitle(`Ringkasan Report — ${data.month} ${data.year}`)}
-    <div class="stat-cards">
-      ${mkStatCard('Total Revenue',fmtRp(totalRev),null,'var(--accent)')}
-      ${mkStatCard('Total Profit',fmtRp(totalProfit),null,'var(--green)')}
-      ${mkStatCard('Total Expenses',fmtRp(totalExp),null,'var(--red)')}
-    </div>
-    ${mkMiniTable(['Cabang','Revenue','Profit','Expenses','Margin'], rows)}
-    ${summaryBox}`;
-}
-
-// ── Plans Slide ──
-function slidePlans() {
-  const dones = data.done_projects.filter(p=>p.title);
-  const plans = data.future_plans.filter(p=>p.title);
-  const statusColors = {'Selesai':'var(--green)','In Progress':'var(--accent)','On Hold':'var(--text-dim)'};
-
-  let doneHtml = dones.length ? dones.map(p => `
-    <div class="plan-card" style="border-left:3px solid ${statusColors[p.status]||'var(--text-dim)'}">
-      <div class="plan-header"><span class="plan-title">${esc(p.title)}</span>${mkBadge(p.status, statusColors[p.status]||'var(--text-dim)')}</div>
-      <div class="plan-branch">${esc(p.branch)}</div>
-      ${p.description?`<div class="plan-desc">${esc(p.description)}</div>`:''}
-    </div>`).join('') : '<div class="empty">Tidak ada project</div>';
-
-  let planHtml = plans.length ? plans.map(p => `
-    <div class="plan-card" style="border-left:3px solid var(--blue)">
-      <div class="plan-header"><span class="plan-title">${esc(p.title)}</span>${p.timeline?mkBadge(p.timeline,'var(--blue)'):''}</div>
-      <div class="plan-branch">${esc(p.branch)}</div>
-      ${p.description?`<div class="plan-desc">${esc(p.description)}</div>`:''}
-    </div>`).join('') : '<div class="empty">Belum ada rencana</div>';
-
-  return `<div class="plans-grid">
-    <div class="plans-col">${mkSectionTitle('What We Have Done','var(--green)')}${doneHtml}</div>
-    <div class="plans-col">${mkSectionTitle('Future Plans','var(--blue)')}${planHtml}</div>
-  </div>`;
-}
-
-// ═══════════════════════════════════════════════
-// ENTRY MODE RENDERING
-// ═══════════════════════════════════════════════
-function renderEntryMode() {
-  const slides = getSlides();
-  const total = slides.length;
-  const slideContent = slides[currentSlide] ? slides[currentSlide].html() : '';
-
-  let dots = slides.map((_,i) => `<button class="nav-dot ${i===currentSlide?'active':''}" onclick="goSlide(${i})"></button>`).join('');
-
-  return `<div class="main-entry">
-    <div class="panel-form">
-      <div class="tabs">
-        ${['general','branch','staff','plans'].map(t => `<button class="tab ${activeTab===t?'active':''}" onclick="setTab('${t}')">${t==='general'?'General':t==='branch'?'Per Cabang':t==='staff'?'Staff':'Plans'}</button>`).join('')}
-      </div>
-      <div class="tab-content" id="formContent">${renderFormTab()}</div>
-    </div>
-    <div class="panel-preview">
-      <div class="nav-bar">
-        <div style="font-size:13px;color:var(--text-dim);font-weight:500">Live Preview</div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <button class="nav-btn" onclick="goSlide(${currentSlide-1})" ${currentSlide===0?'disabled':''}>←</button>
-          <span class="nav-counter">${currentSlide+1} / ${total}</span>
-          <button class="nav-btn" onclick="goSlide(${currentSlide+1})" ${currentSlide===total-1?'disabled':''}>→</button>
-        </div>
-      </div>
-      <div style="max-width:900px;margin:0 auto">
-        ${slideWrap(slideContent, currentSlide+1, total)}
-      </div>
-      <div class="nav-dots">${dots}</div>
+  const tabsHtml=tabs.map(t=>`<button class="guide-tab ${guideTab===t.id?'active':''}" onclick="setGuideTab('${t.id}')">${t.label}</button>`).join('');
+  const overlay=document.createElement('div');
+  overlay.id='guideOverlay';
+  overlay.className='guide-overlay';
+  overlay.onclick=e=>{if(e.target===overlay){guideOpen=false;renderGuide()}};
+  overlay.innerHTML=`<div class="guide-modal">
+    <div class="guide-header"><h2><span style="font-size:20px">📖</span> Panduan Pengisian</h2><button class="guide-close" onclick="toggleGuide()">×</button></div>
+    <div class="guide-body">
+      <div class="guide-tabs">${tabsHtml}</div>
+      <div class="guide-section">${sections[guideTab]||''}</div>
     </div>
   </div>`;
+  document.body.appendChild(overlay);
+}
+function gi(label,desc,example){
+  return`<div class="guide-item"><div class="guide-item-label">${label}</div><div class="guide-item-desc">${desc}</div>${example&&example!=='-'?`<div class="guide-item-example">Contoh: ${example}</div>`:''}</div>`;
 }
 
-function renderPresentMode() {
-  const slides = getSlides();
-  const total = slides.length;
-  const slideContent = slides[currentSlide] ? slides[currentSlide].html() : '';
-  let dots = slides.map((_,i) => `<button class="nav-dot ${i===currentSlide?'active':''}" onclick="goSlide(${i})" style="width:8px;height:8px;border-radius:4px"></button>`).join('');
-
-  return `<div class="present-mode">
-    <div style="max-width:960px;width:100%">${slideWrap(slideContent, currentSlide+1, total)}</div>
-    <div class="present-nav">
-      <button class="present-btn" style="border:1px solid var(--border);background:var(--card);color:${currentSlide===0?'var(--text-dim)':'var(--text)'}" onclick="goSlide(${currentSlide-1})" ${currentSlide===0?'disabled':''}>← Previous</button>
-      <span class="nav-counter" style="min-width:60px;text-align:center">${currentSlide+1} / ${total}</span>
-      <button class="present-btn" style="border:none;background:${currentSlide===total-1?'var(--border-light)':'var(--accent)'};color:${currentSlide===total-1?'var(--text-dim)':'var(--bg)'}" onclick="goSlide(${currentSlide+1})" ${currentSlide===total-1?'disabled':''}>Next →</button>
-    </div>
-    <div class="nav-dots" style="margin-top:16px">${dots}</div>
-    <p class="present-hint">Use ← → arrow keys to navigate</p>
-  </div>`;
-}
-
-// ═══════════════════════════════════════════════
-// FORM TAB RENDERING
-// ═══════════════════════════════════════════════
-function renderFormTab() {
-  if (activeTab === 'general') return renderGeneralTab();
-  if (activeTab === 'branch') return renderBranchTab();
-  if (activeTab === 'staff') return renderStaffTab();
-  if (activeTab === 'plans') return renderPlansTab();
-  return '';
-}
-
-function mkField(label, value, onchange, opts={}) {
-  const id = 'f_' + Math.random().toString(36).substr(2,6);
-  const cls = opts.mono ? 'mono' : '';
-  return `<div class="field" ${opts.width?`style="flex:none;width:${opts.width}"`:''}>${label?`<label>${esc(label)}</label>`:''}<input class="${cls}" type="${opts.type||'text'}" value="${esc(value)}" placeholder="${esc(opts.placeholder||label||'')}" oninput="${onchange}(this.value)" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"/></div>`;
-}
-
-function mkSelect(label, value, onchange, options) {
-  const opts = options.map(o => `<option value="${esc(o)}" ${o===value?'selected':''}>${esc(o)}</option>`).join('');
-  return `<div class="field">${label?`<label>${esc(label)}</label>`:''}<select onchange="${onchange}(this.value)">${opts}</select></div>`;
-}
-
-function mkTextarea(label, value, onchange, rows=4) {
-  return `<div class="field">${label?`<label>${esc(label)}</label>`:''}<textarea rows="${rows}" oninput="${onchange}(this.value)" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">${esc(value)}</textarea></div>`;
-}
-
-function renderGeneralTab() {
-  return `
-    <div class="form-section">
-      <div class="form-section-header"><div class="form-section-bar" style="background:var(--accent)"></div><h3 class="form-section-title">Periode Report</h3></div>
-      <div class="form-section-body">
-        <div class="field-row">
-          ${mkSelect('Bulan', data.month, 'updateMonth', MONTHS)}
-          ${mkField('Tahun', data.year, 'updateYear', {mono:true})}
-        </div>
-      </div>
-    </div>
-    <div class="form-section">
-      <div class="form-section-header"><div class="form-section-bar" style="background:var(--accent)"></div><h3 class="form-section-title">Ringkasan Report</h3></div>
-      <div class="form-section-body">
-        ${mkTextarea('Executive Summary', data.summary, 'updateSummary', 6)}
-      </div>
-    </div>`;
-}
-
-function renderBranchTab() {
-  const bd = data.branches[activeBranch];
-  const bTabs = BRANCHES.map(b => `<button class="branch-tab ${activeBranch===b?'active':''}" onclick="setBranch('${b}')">${b}</button>`).join('');
-
-  let expCats = bd.expense_categories.map((c,i) => `
-    <div class="field-row-item">
-      ${mkField(i===0?'Kategori':'', c.name, `updateBranchArr('expense_categories',${i},'name')`, {placeholder:'e.g. Gaji, Sewa'})}
-      ${mkField(i===0?'Jumlah':'', c.amount, `updateBranchArr('expense_categories',${i},'amount')`, {mono:true, placeholder:'Nominal'})}
-      ${bd.expense_categories.length>1 ? `<button class="btn-remove" onclick="removeBranchArr('expense_categories',${i})">×</button>` : ''}
-    </div>`).join('');
-
-  let topReg = bd.top_regular.map((p,i) => `
-    <div class="field-row-item">
-      ${mkSelect(i===0?'Program':'', p.program, `updateBranchArr('top_regular',${i},'program')`, PROG_REG)}
-      ${mkField(i===0?'Jumlah':'', p.count, `updateBranchArr('top_regular',${i},'count')`, {mono:true, width:'100px'})}
-      ${bd.top_regular.length>1 ? `<button class="btn-remove" onclick="removeBranchArr('top_regular',${i})">×</button>` : ''}
-    </div>`).join('');
-
-  let topPrv = bd.top_private.map((p,i) => `
-    <div class="field-row-item">
-      ${mkSelect(i===0?'Program':'', p.program, `updateBranchArr('top_private',${i},'program')`, PROG_PRV)}
-      ${mkField(i===0?'Jumlah':'', p.count, `updateBranchArr('top_private',${i},'count')`, {mono:true, width:'100px'})}
-      ${bd.top_private.length>1 ? `<button class="btn-remove" onclick="removeBranchArr('top_private',${i})">×</button>` : ''}
-    </div>`).join('');
-
-  let revByProg = bd.revenue_by_program.map((p,i) => `
-    <div class="field-row-item">
-      ${mkField(i===0?'Nama Program':'', p.program, `updateBranchArr('revenue_by_program',${i},'program')`, {placeholder:'Nama Program'})}
-      ${mkField(i===0?'Revenue':'', p.revenue, `updateBranchArr('revenue_by_program',${i},'revenue')`, {mono:true, placeholder:'Nominal'})}
-      ${bd.revenue_by_program.length>1 ? `<button class="btn-remove" onclick="removeBranchArr('revenue_by_program',${i})">×</button>` : ''}
-    </div>`).join('');
-
-  return `
-    <div class="branch-tabs">${bTabs}</div>
-
-    <div class="form-section">
-      <div class="form-section-header"><div class="form-section-bar" style="background:var(--accent)"></div><h3 class="form-section-title">Revenue</h3></div>
-      <div class="form-section-body"><div class="field-row">
-        ${mkField('Revenue Bulan Ini', bd.revenue, "updateBranch('revenue')", {mono:true, placeholder:'e.g. 150000000'})}
-        ${mkField('Target Revenue', bd.target_revenue, "updateBranch('target_revenue')", {mono:true})}
-        ${mkField('Revenue Bulan Lalu', bd.prev_revenue, "updateBranch('prev_revenue')", {mono:true})}
-      </div></div>
-    </div>
-
-    <div class="form-section">
-      <div class="form-section-header"><div class="form-section-bar" style="background:var(--green)"></div><h3 class="form-section-title">Profit</h3></div>
-      <div class="form-section-body"><div class="field-row">
-        ${mkField('Profit Bulan Ini', bd.profit, "updateBranch('profit')", {mono:true})}
-        ${mkField('Target Profit', bd.target_profit, "updateBranch('target_profit')", {mono:true})}
-        ${mkField('Profit Bulan Lalu', bd.prev_profit, "updateBranch('prev_profit')", {mono:true})}
-      </div></div>
-    </div>
-
-    <div class="form-section">
-      <div class="form-section-header"><div class="form-section-bar" style="background:var(--red)"></div><h3 class="form-section-title">Expenses</h3></div>
-      <div class="form-section-body">
-        <div class="field-row">
-          ${mkField('Total Expenses', bd.expenses, "updateBranch('expenses')", {mono:true})}
-          ${mkField('Expenses Bulan Lalu', bd.prev_expenses, "updateBranch('prev_expenses')", {mono:true})}
-        </div>
-        <div class="hint">Breakdown Kategori:</div>
-        ${expCats}
-        <button class="btn-add" onclick="addBranchArr('expense_categories',{name:'',amount:''})">+ Tambah Kategori</button>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <div class="form-section-header"><div class="form-section-bar" style="background:var(--blue)"></div><h3 class="form-section-title">Transaction Analysis</h3></div>
-      <div class="form-section-body">
-        <div class="field-row">
-          ${mkField('Jumlah Kelas Regular', bd.regular_count, "updateBranch('regular_count')", {mono:true})}
-          ${mkField('Jumlah Kelas Private', bd.private_count, "updateBranch('private_count')", {mono:true})}
-        </div>
-        <div class="field-row">
-          ${mkField('Register Baru (Regular)', bd.regular_new, "updateBranch('regular_new')", {mono:true})}
-          ${mkField('Perpanjangan (Regular)', bd.regular_ext, "updateBranch('regular_ext')", {mono:true})}
-        </div>
-        <div class="field-row">
-          ${mkField('Register Baru (Private)', bd.private_new, "updateBranch('private_new')", {mono:true})}
-          ${mkField('Perpanjangan (Private)', bd.private_ext, "updateBranch('private_ext')", {mono:true})}
-        </div>
-        <div class="hint" style="margin-top:8px">Top Program - Regular:</div>
-        ${topReg}
-        <button class="btn-add" onclick="addBranchArr('top_regular',{program:'${PROG_REG[0]}',count:''})">+ Tambah Program Regular</button>
-        <div class="hint" style="margin-top:8px">Top Program - Private:</div>
-        ${topPrv}
-        <button class="btn-add" onclick="addBranchArr('top_private',{program:'${PROG_PRV[0]}',count:''})">+ Tambah Program Private</button>
-        <div class="hint" style="margin-top:8px">Revenue by Program:</div>
-        ${revByProg}
-        <button class="btn-add" onclick="addBranchArr('revenue_by_program',{program:'',revenue:''})">+ Tambah Program Revenue</button>
-      </div>
-    </div>`;
-}
-
-function renderStaffTab() {
-  let salesCards = data.sales_staff.map((s,i) => `
-    <div class="staff-card">
-      <div class="staff-row">
-        <span class="staff-num">#${i+1}</span>
-        ${mkField('', s.name, `updateArr('sales_staff',${i},'name')`, {placeholder:'Nama Staff'})}
-        ${data.sales_staff.length>1 ? `<button class="btn-remove" onclick="removeArr('sales_staff',${i})">×</button>` : ''}
-      </div>
-      <div class="staff-fields">
-        ${mkField('Target', s.target, `updateArr('sales_staff',${i},'target')`, {mono:true})}
-        ${mkField('Achieved', s.achieved, `updateArr('sales_staff',${i},'achieved')`, {mono:true})}
-        ${mkField('Deals', s.deals, `updateArr('sales_staff',${i},'deals')`, {mono:true})}
-      </div>
-    </div>`).join('');
-
-  let asCards = data.aftersales_staff.map((s,i) => `
-    <div class="staff-card">
-      <div class="staff-row">
-        <span class="staff-num">#${i+1}</span>
-        ${mkField('', s.name, `updateArr('aftersales_staff',${i},'name')`, {placeholder:'Nama Staff'})}
-        ${data.aftersales_staff.length>1 ? `<button class="btn-remove" onclick="removeArr('aftersales_staff',${i})">×</button>` : ''}
-      </div>
-      <div class="staff-fields">
-        ${mkField('Retention Target', s.retention_target, `updateArr('aftersales_staff',${i},'retention_target')`, {mono:true})}
-        ${mkField('Retention Achieved', s.retention_achieved, `updateArr('aftersales_staff',${i},'retention_achieved')`, {mono:true})}
-        ${mkField('Follow Ups', s.followups, `updateArr('aftersales_staff',${i},'followups')`, {mono:true})}
-        ${mkField('Resolutions', s.resolutions, `updateArr('aftersales_staff',${i},'resolutions')`, {mono:true})}
-      </div>
-    </div>`).join('');
-
-  return `
-    <div class="form-section">
-      <div class="form-section-header"><div class="form-section-bar" style="background:var(--accent)"></div><h3 class="form-section-title">Sales Staff Achievement</h3></div>
-      <div class="form-section-body">
-        ${salesCards}
-        <button class="btn-add" onclick="addArr('sales_staff',{name:'',target:'',achieved:'',deals:''})">+ Tambah Sales Staff</button>
-      </div>
-    </div>
-    <div class="form-section">
-      <div class="form-section-header"><div class="form-section-bar" style="background:var(--purple)"></div><h3 class="form-section-title">After Sales Staff Achievement</h3></div>
-      <div class="form-section-body">
-        ${asCards}
-        <button class="btn-add" onclick="addArr('aftersales_staff',{name:'',retention_target:'',retention_achieved:'',followups:'',resolutions:''})">+ Tambah After Sales Staff</button>
-      </div>
-    </div>`;
-}
-
-function renderPlansTab() {
-  let doneCards = data.done_projects.map((p,i) => `
-    <div class="staff-card">
-      <div class="field-row-item">
-        ${mkField('Judul Project', p.title, `updateArr('done_projects',${i},'title')`)}
-        ${mkSelect('Cabang', p.branch, `updateArr('done_projects',${i},'branch')`, BRANCHES)}
-        ${mkSelect('Status', p.status, `updateArr('done_projects',${i},'status')`, ['Selesai','In Progress','On Hold'])}
-        ${data.done_projects.length>1 ? `<button class="btn-remove" onclick="removeArr('done_projects',${i})">×</button>` : ''}
-      </div>
-      ${mkTextarea('Deskripsi', p.description, `updateArr('done_projects',${i},'description')`, 2)}
-    </div>`).join('');
-
-  let planCards = data.future_plans.map((p,i) => `
-    <div class="staff-card">
-      <div class="field-row-item">
-        ${mkField('Judul Rencana', p.title, `updateArr('future_plans',${i},'title')`)}
-        ${mkSelect('Cabang', p.branch, `updateArr('future_plans',${i},'branch')`, BRANCHES)}
-        ${mkField('Timeline', p.timeline, `updateArr('future_plans',${i},'timeline')`, {placeholder:'e.g. Feb 2025'})}
-        ${data.future_plans.length>1 ? `<button class="btn-remove" onclick="removeArr('future_plans',${i})">×</button>` : ''}
-      </div>
-      ${mkTextarea('Deskripsi', p.description, `updateArr('future_plans',${i},'description')`, 2)}
-    </div>`).join('');
-
-  return `
-    <div class="form-section">
-      <div class="form-section-header"><div class="form-section-bar" style="background:var(--green)"></div><h3 class="form-section-title">What We Have Done</h3></div>
-      <div class="form-section-body">
-        ${doneCards}
-        <button class="btn-add" onclick="addArr('done_projects',{title:'',description:'',branch:'${BRANCHES[0]}',status:'Selesai'})">+ Tambah Project</button>
-      </div>
-    </div>
-    <div class="form-section">
-      <div class="form-section-header"><div class="form-section-bar" style="background:var(--blue)"></div><h3 class="form-section-title">Future Plans</h3></div>
-      <div class="form-section-body">
-        ${planCards}
-        <button class="btn-add" onclick="addArr('future_plans',{title:'',description:'',branch:'${BRANCHES[0]}',timeline:''})">+ Tambah Rencana</button>
-      </div>
-    </div>`;
-}
-
-// ═══════════════════════════════════════════════
-// DATA UPDATE FUNCTIONS
-// ═══════════════════════════════════════════════
-function updateMonth(v) { data.month = v; render(); }
-function updateYear(v) { data.year = v; render(); }
-function updateSummary(v) { data.summary = v; }
-
-function updateBranch(field) { return function(v) { data.branches[activeBranch][field] = v; renderPreviewOnly(); }; }
-// Make updateBranch callable from inline: updateBranch('field')(value)
-window.updateBranch = function(field) { return function(v) { data.branches[activeBranch][field] = v; renderPreviewOnly(); }; };
-
-function updateBranchArr(arrName, idx, field) { return function(v) { data.branches[activeBranch][arrName][idx][field] = v; renderPreviewOnly(); }; }
-window.updateBranchArr = function(arrName, idx, field) { return function(v) { data.branches[activeBranch][arrName][idx][field] = v; renderPreviewOnly(); }; };
-
-function addBranchArr(arrName, template) { data.branches[activeBranch][arrName].push(JSON.parse(JSON.stringify(template))); render(); }
-function removeBranchArr(arrName, idx) { data.branches[activeBranch][arrName].splice(idx, 1); render(); }
-
-function updateArr(base, idx, field) { return function(v) { data[base][idx][field] = v; renderPreviewOnly(); }; }
-window.updateArr = function(base, idx, field) { return function(v) { data[base][idx][field] = v; renderPreviewOnly(); }; };
-
-function addArr(base, template) { data[base].push(JSON.parse(JSON.stringify(template))); render(); }
-function removeArr(base, idx) { data[base].splice(idx, 1); render(); }
-
-// Smart re-render: only update preview panel if in entry mode
-function renderPreviewOnly() {
-  if (mode !== 'entry') return;
-  const slides = getSlides();
-  const total = slides.length;
-  const slideContent = slides[currentSlide] ? slides[currentSlide].html() : '';
-  const previewSlide = document.querySelector('.panel-preview > div:nth-child(2) > .slide');
-  if (previewSlide) {
-    previewSlide.innerHTML = `<div class="slide-accent"></div>${slideContent}<div class="slide-num">${currentSlide+1} / ${total}</div>`;
-  }
-}
-
-// ═══════════════════════════════════════════════
-// NAVIGATION & MODE
-// ═══════════════════════════════════════════════
-function setMode(m) { mode = m; currentSlide = Math.min(currentSlide, getSlides().length - 1); render(); }
-function setTab(t) { activeTab = t; render(); }
-function setBranch(b) { activeBranch = b; render(); }
-function goSlide(n) { const total = getSlides().length; currentSlide = Math.max(0, Math.min(total-1, n)); render(); }
-
-// Keyboard nav
-document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { goSlide(currentSlide + 1); e.preventDefault(); }
-  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { goSlide(currentSlide - 1); e.preventDefault(); }
-});
-
-// ═══════════════════════════════════════════════
-// IMPORT / EXPORT
-// ═══════════════════════════════════════════════
-function exportJSON() {
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `GE-Bekasi-Report-${data.month}-${data.year}.json`; a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importJSON() {
-  const input = document.createElement('input');
-  input.type = 'file'; input.accept = '.json';
-  input.onchange = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try { data = JSON.parse(ev.target.result); render(); }
-      catch { alert('Invalid JSON file'); }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-}
-
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
 render();
 </script>
 </body>
